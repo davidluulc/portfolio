@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>哪些归 AI，哪些归我 — 孔维邦</title>
+<meta name="description" content="AI 负责可能性，我负责责任。一个可判定性、可逆性、责任归属的三问框架，和我在反诈骗平台、评测集、面试系统里的人机分工实践。">
+<script>try{var t=localStorage.getItem("kwb-theme"),h=new Date().getHours();if(t){document.documentElement.setAttribute("data-theme",t)}else if(h>=6&&h<18){document.documentElement.setAttribute("data-theme","light")}}catch(e){}</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=JetBrains+Mono:ital,wght@0,400;0,700;1,400&family=Noto+Sans+SC:wght@400;500;700;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/css/site.css">
+<link rel="stylesheet" href="../assets/css/page.css">
+<link rel="stylesheet" href="../assets/css/gua.css">
+</head>
+<body class="pg">
+
+<header class="bar" id="topbar">
+  <div class="bar-in">
+    <nav class="links">
+      <a href="../index.html#about">关于</a>
+      <a href="../index.html#projects">项目</a>
+      <a href="../demo/fallback.html">实验</a>
+      <a href="../index.html#writing">文章</a>
+      <a href="../index.html#contact">联络</a>
+    </nav>
+    <button class="toggle" id="themeToggle" aria-label="切换亮暗模式">
+      <span class="knob">
+        <svg viewBox="0 0 24 24" id="knobIcon"><path id="knobPath" d="M21 12.8A9 9 0 1 1 11.2 3 7 7 0 0 0 21 12.8Z"/></svg>
+      </span>
+    </button>
+  </div>
+  <svg class="gua-rail" viewBox="0 0 1440 80" preserveAspectRatio="none" aria-hidden="true">
+    <path d="M -120 80 L 1560 80"/>
+  </svg>
+</header>
+
+<main id="main">
+<div class="wrap">
+
+  <div class="page-head">
+    <p class="kicker" data-rv>文章 · 2026.09 · 约 8 分钟</p>
+    <h1 class="page-title" data-rv="90">哪些归 AI，<br>哪些归我</h1>
+    <div class="meta" data-rv="180">
+      <span>关联 <b>反诈骗平台 · 评测集 · 面试系统</b></span>
+      <span>主题 <b>人机分工 · 工程判断</b></span>
+    </div>
+  </div>
+
+  <div class="article">
+
+    <p data-rv>AI 写作率 87% 是个值得玩味的数字——我汇报它的时候总要补一句「口径已修正」，因为剩下 13% 不是没做到，是<b>刻意留的</b>。哪些环节交给 AI、哪些环节必须留在人手里，这不是效率问题，是这个岗位存在的理由。这篇文章把我实际用过的判断标准摊开。</p>
+
+    <h3 data-rv>一、三问框架：可判定、可逆、可担责</h3>
+    <p data-rv>一个环节要不要交给 AI，我过三道关，按顺序：</p>
+    <ul>
+      <li data-rv><b>可判定性</b>：这个环节的对错有没有明确的判定标准？有（代码能否编译、检索有没有命中、格式是否符合 schema）→ 可以自动化并让它自己闭环；没有（这份措辞是否伤人、这个判断是否公正）→ 人必须在场。可判定的部分越约束越好，不可判定的部分越诚实越好。</li>
+      <li data-rv><b>可逆性</b>：错了之后能回滚吗？能（生成一版草稿、一次追问）→ 大胆放权，让 AI 快速试错；不能（发出去的报告、对外的话）→ 放权比例和拦截强度成反比。可逆性决定了自动化可以跑多快。</li>
+      <li data-rv><b>责任归属</b>：这事最后谁签字？AI 不能担责——不是技术限制，是责任必须落在能被问责的主体上。凡是要「盖章」的环节，人必须在环上。前两问决定 AI 能做多少，这一问决定它最多被允许做多少。</li>
+    </ul>
+    <p data-rv>三问全过，全自动化；过了前两问，人监督;只过第一问，人深度参与；一问都没过，那是给人配了个参谋，参谋爱说说去，决定权寸步不让。</p>
+
+    <h3 data-rv>二、三处实战</h3>
+    <p data-rv><b>反诈骗援助平台的报告生成。</b>结构化抽取、初稿撰写、格式整理全交 AI——可判定（有评测集四维标准兜底）、可逆（草稿可改）。但三类环节钉死在人这边：事实核验（AI 引用的数字必须对到原始输入，这一步出错会误导办案方向）、法律边界表述、最终放行——报告是要被信任的文书，签字的是人。所以写作率停在 87% 不是能力天花板，是责任地板。</p>
+    <p data-rv><b>评测集。</b>打分执行可以让模型辅助（先跑一遍预打分提高效率），但<b>验收标准的制定和边界案例的裁决必须是人</b>——让被考的学生出考卷，是这件事里唯一的死罪。90 份基线的每一份，最终签名都是人。</p>
+    <p data-rv><b>AI 模拟面试系统。</b>反过来了：追问是机器的强项（不带情绪、不怕尴尬、沿逻辑链死磕），复盘报告是它的舒适区。但「这个薄弱点算不算致命」的权重判断，我留给人——面试系统里最贵的不是题库，是学员对自己的判断力，机器代劳了这个，练完还是不敢去面。</p>
+
+    <h3 data-rv>三、行业里的同款争论</h3>
+    <p data-rv>这个题目行业里吵了很多年，词汇换了几茬，骨架没变：</p>
+    <ul>
+      <li data-rv><b>Copilot 谱系</b>：从 GitHub Copilot 到各家助手，默认姿态是「人主机器辅」——每一步都等人确认。最近行业在向 Agent 谱系迁移（给目标让它自己跑），本质是三问的答案在变：模型的可靠率上来了，可判定域扩大了，放权边界就前移。<b>边界是移动的，而且移动它正是工程师的工作。</b></li>
+      <li data-rv><b>Human-in-the-loop 的三层</b>：拦截式（AI 全跑，可疑才叫人）、审批式（AI 准备好，人按确认）、抽检式（AI 全自动，人事后抽查）。我用「审批式 + 抽检式」组合管报告链路，用「拦截式」管内部预打分——监督强度和风险等级挂钩，不是一刀切。</li>
+      <li data-rv><b>自动化悖论</b>：航空业的老教训——自动驾驶越强，飞行员手动能力越退化，而恰恰在最需要接管的时刻最需要这能力。AI 应用同理：人机分工不是切完就完，<b>留在人手里的环节要定期真刀真枪地练</b>，否则「人工兜底」兜的是个空底。</li>
+      <li data-rv><b>Anthropic 与 OpenAI 的 oversight 讨论</b>：两家在模型对齐文献里反复强调「人类监督的有效性」本身就是系统能力——监督节点设计得好，模型能力才能安全兑现。我的三问框架是这套思想在业务落地层的土办法。</li>
+    </ul>
+
+    <h3 data-rv>四、一条会移动的线</h3>
+    <p data-rv>经常有人问「AI 会不会取代 XX」。我在这三个系统里的体感是：AI 取代的从来不是岗位，是<b>岗位里可判定、可逆、无需担责的那部分颗粒</b>。颗粒被吸走之后，剩下的部分更浓了——剩下的全是判断、责任和那些「说不清对错但很要紧」的事。</p>
+    <blockquote data-rv>AI 负责可能性，我负责责任。它把一百条路摆到我面前，我决定走哪条、并且为走到哪负责。这条分工线每个月都在移动——而移动它，就是我的工作本身。</blockquote>
+    <p data-rv>所以当 87% 这个数字被追问「为什么不是 100%」时，我的回答是：因为最后那 13%，才是我领工资的理由。</p>
+
+  </div>
+
+  <div class="pn">
+    <a href="fallback-chain.html"><span class="lbl">← 上一篇</span><span class="ttl">降级链</span></a>
+    <a class="next" href="../index.html#contact"><span class="lbl">→ 想聊聊？</span><span class="ttl">联系我</span></a>
+  </div>
+
+</div>
+</main>
+
+<footer class="foot">© 2026 孔维邦 · 深圳 · 网络工程 2023–2027 · <a href="https://github.com/davidluulc" target="_blank" rel="noopener">github.com/davidluulc</a></footer>
+
+<script src="../assets/js/site.js"></script>
+<script src="../assets/js/gua.js"></script>
+<script>
+SitePage.init();
+GuaPet.init({base:'../assets/gua/',ver:'?v=15',scale:.3,xMin:40,xMax:function(){return innerWidth/2+40},always:true,
+  surfaces:innerWidth>900?[{path:document.querySelector('.gua-rail path'),sp:100,dd:0,delay:0,
+    svg:document.querySelector('.gua-rail'),vbW:1440,vbH:80,driftAmp:0}]:[]});
+</script>
+</body>
+</html>

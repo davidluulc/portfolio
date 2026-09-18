@@ -1,0 +1,19 @@
+# 本地过程与归档（不入库）
+archive/
+tools/
+notes/
+.mimosa/
+.v2c/
+.video_agent/
+*.log
+
+# 本地草稿与工具（保持私密）
+主页文案草案.md
+想法台账.md
+求职站设计简报.md
+启动本地预览.bat
+
+# 旧版站点与内部文档（含未脱敏内容，绝不入公开仓库）
+portfolio/
+求职站-*.html
+design-spec.md

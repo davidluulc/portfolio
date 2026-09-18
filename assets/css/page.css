@@ -1,0 +1,159 @@
+/* ============ 项目/文章子页（design-spec.md §6.1 克制系） ============
+ * 依赖 site.css 的变量体系与导航/页脚外壳；本文件只管子页内容区。
+ * 交互四件套：reveal 淡入(stagger)、章节吸顶、数字滚动、时间线。
+ * 红线：动效 ≤600ms、一次触发不回放、无 pin/横滚/劫持。 */
+
+/* ---- Reveal 基础态（js-rv 类由 site.js 在动画可用时添加） ---- */
+.js-rv [data-rv]{opacity:0;transform:translateY(24px)}
+.js-rv [data-rv].in{opacity:1;transform:none;
+  transition:opacity .55s ease,transform .55s cubic-bezier(.16,1,.3,1)}
+
+/* ---- 页头 ---- */
+.page-head{padding:104px 0 0}
+.kicker{font-family:"JetBrains Mono","Noto Sans SC",monospace;font-size:13px;
+  font-weight:500;letter-spacing:.14em;color:var(--gold)}
+.page-title{font-size:clamp(38px,6vw,64px);font-weight:800;line-height:1.22;
+  letter-spacing:-.01em;margin-top:18px}
+.page-sub{font-size:18px;line-height:1.95;color:var(--text);font-weight:500;
+  max-width:32em;margin-top:20px}
+.page-sub b{color:var(--accent)}
+.meta{display:flex;flex-wrap:wrap;gap:10px 30px;margin-top:26px;
+  font-size:13px;color:var(--text-dim)}
+.meta b{color:var(--text);font-weight:600}
+
+/* ---- 子页导航：无云海，遮罩恒用页面底色（避免残留天空渐变横幅） ---- */
+body.pg header.bar{--nav-top:var(--bg)}
+
+/* ---- 咕嘎行走轨道：铺满导航栏下移 24px（脚底线=导航下沿再往下探一点） ---- */
+.gua-rail{position:absolute;left:0;top:24px;width:100%;height:80px;pointer-events:none;display:block}
+
+/* ---- 章节与吸顶小节标题（磨砂：轻色调+模糊，不在天空渐变上压白带） ---- */
+.sec{margin-top:72px}
+.sec-head{display:flex;align-items:center;gap:12px;
+  position:sticky;top:80px;z-index:5;padding:14px 0;
+  background:color-mix(in srgb,var(--bg) 38%,transparent);
+  backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}
+.sec-head .dash{width:26px;height:4px;border-radius:3px;background:var(--accent);flex:none}
+.sec-head h2{font-size:24px;font-weight:800;letter-spacing:.01em}
+.sec-body{margin-top:26px}
+.prose p{font-size:16px;line-height:2.1;color:var(--text-dim);max-width:42em;margin-bottom:20px}
+.prose p:last-child{margin-bottom:0}
+.prose b,.prose strong{color:var(--text);font-weight:700}
+.prose code{font-family:"JetBrains Mono",monospace;font-size:.86em;
+  background:color-mix(in srgb,var(--text) 8%,transparent);
+  padding:2px 7px;border-radius:5px;color:var(--text)}
+
+/* ---- 证据链时间线 ---- */
+.chain{border-left:2px solid var(--line);margin:8px 0 4px;padding-left:24px}
+.chain .step{position:relative;padding-bottom:30px}
+.chain .step:last-child{padding-bottom:6px}
+.chain .step::before{content:"";position:absolute;left:-31px;top:7px;width:9px;height:9px;
+  border-radius:50%;background:var(--bg);border:2px solid var(--accent)}
+.chain .ref-line{font-family:"JetBrains Mono","Noto Sans SC",monospace;
+  font-size:12.5px;font-weight:700;color:var(--accent);margin-bottom:8px}
+.chain .ref-line span{color:var(--text-dim);font-weight:400}
+.chain p{font-size:14.5px;line-height:2.05;color:var(--text-dim);max-width:44em}
+.chain p b{color:var(--text)}
+.chain .ref{font-family:"JetBrains Mono",monospace;font-size:.88em;color:var(--accent);
+  background:color-mix(in srgb,var(--accent) 10%,transparent);
+  padding:1px 6px;border-radius:4px;white-space:nowrap}
+
+/* ---- 数字带 ---- */
+.nums{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));
+  gap:18px;margin-top:40px}
+.num{background:var(--bg-card);border:1.5px solid var(--line);border-radius:16px;
+  padding:20px 22px;transition:transform .3s cubic-bezier(.34,1.56,.64,1),border-color .3s}
+.num:hover{transform:translateY(-4px);border-color:var(--accent)}
+.num b{display:block;font-family:"JetBrains Mono","Noto Sans SC",monospace;
+  font-size:30px;font-weight:700;color:var(--text);letter-spacing:-.02em}
+.num span{display:block;margin-top:6px;font-size:12.5px;color:var(--text-dim);
+  letter-spacing:.06em}
+.num.gold b{color:var(--gold)}
+
+/* ---- QA 卡 ---- */
+.qa{background:var(--bg-card);border:1.5px solid var(--line);border-radius:20px;
+  padding:26px 28px;margin-bottom:18px}
+.qa .q{font-size:16.5px;font-weight:700;margin-bottom:12px}
+.qa .q::before{content:"Q";font-family:"JetBrains Mono",monospace;color:var(--accent);
+  margin-right:10px}
+.qa p{font-size:15px;line-height:2.05;color:var(--text-dim)}
+.qa p b{color:var(--text)}
+
+/* ---- 六环/步骤网格 ---- */
+.grid6{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:8px}
+.cell{background:var(--bg-card);border:1.5px solid var(--line);border-radius:16px;
+  padding:20px 22px;transition:transform .3s cubic-bezier(.34,1.56,.64,1),border-color .3s}
+.cell:hover{transform:translateY(-4px);border-color:var(--accent)}
+.cell b{display:block;font-size:15.5px;font-weight:700;margin-bottom:8px}
+.cell b::after{content:attr(data-i);display:block;float:right;
+  font-family:"JetBrains Mono",monospace;font-size:12px;color:var(--text-dim);margin-top:2px}
+.cell p{font-size:13.5px;line-height:1.9;color:var(--text-dim)}
+.cell.hl{border-color:var(--gold)}
+.cell.hl b{color:var(--gold)}
+
+/* ---- 进行中提示条 ---- */
+.wip{margin-top:26px;padding:16px 20px;border-radius:14px;
+  border:1.5px dashed var(--gold);color:var(--gold);font-size:13.5px;line-height:1.9}
+
+/* ---- 文章正文排版（spec §6.2：技术长文，排印优先） ---- */
+.article{margin-top:52px}
+.article h3{font-size:21px;font-weight:800;line-height:1.5;margin:52px 0 18px;position:relative;padding-left:16px}
+.article h3::before{content:"";position:absolute;left:0;top:7px;bottom:7px;width:4px;border-radius:2px;background:var(--accent)}
+.article p{font-size:16px;line-height:2.15;color:var(--text-dim);max-width:42em;margin-bottom:20px}
+.article p b{color:var(--text)}
+.article blockquote{margin:30px 0;padding:18px 26px;border-left:3px solid var(--gold);
+  background:var(--bg-card);border-radius:0 14px 14px 0;
+  font-size:15.5px;line-height:2;color:var(--text-dim);max-width:42em}
+.article blockquote b{color:var(--gold)}
+.article ul{margin:0 0 22px;list-style:none;max-width:42em}
+.article ul li{font-size:15.5px;line-height:2;color:var(--text-dim);padding-left:22px;position:relative;margin-bottom:9px}
+.article ul li::before{content:"";position:absolute;left:3px;top:14px;width:7px;height:7px;border-radius:50%;background:var(--accent)}
+.article ul li b{color:var(--text)}
+
+/* ---- 可视化①：柱状生长（.bars[data-rv] 入视口后长到 --h） ---- */
+.bars{display:flex;gap:30px;align-items:flex-end;height:230px;margin:38px 0 10px;padding:0 10px;border-bottom:2px solid var(--line)}
+.bar{flex:1;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;gap:10px;height:100%}
+.bar i{width:100%;max-width:120px;border-radius:10px 10px 0 0;height:var(--h);
+  background:linear-gradient(180deg,var(--accent),color-mix(in srgb,var(--accent) 40%,var(--bg)));
+  transition:height .9s cubic-bezier(.16,1,.3,1)}
+.bar.gold i{background:linear-gradient(180deg,var(--gold),color-mix(in srgb,var(--gold) 40%,var(--bg)))}
+.js-rv .bars:not(.in) i{height:0}
+.bar .bv{font-family:"JetBrains Mono","Noto Sans SC",monospace;font-size:19px;font-weight:700;color:var(--text)}
+.bar .bk{font-size:12.5px;color:var(--text-dim);line-height:1.6;text-align:center}
+.bars-cap{font-size:12.5px;color:var(--text-dim);margin-bottom:26px}
+
+/* ---- 可视化②：降级三层流（滚动逐层展开） ---- */
+.flow{margin:34px 0;display:flex;flex-direction:column}
+.fstep{position:relative;background:var(--bg-card);border:1.5px solid var(--line);border-radius:16px;padding:18px 24px;max-width:600px}
+.fstep+.fstep{margin-top:36px}
+.fstep+.fstep::before{content:"↓";position:absolute;top:-29px;left:50%;transform:translateX(-50%);
+  color:var(--gold);font-size:17px;font-weight:700}
+.fstep b{display:block;font-size:15px;margin-bottom:8px;color:var(--text)}
+.fstep b em{font-style:normal;font-family:"JetBrains Mono",monospace;font-size:12px;color:var(--gold);margin-right:8px}
+.fstep p{font-size:14px;line-height:1.95;color:var(--text-dim)}
+.fstep.hl{border-color:var(--gold)}
+.fstep.hl b{color:var(--gold)}
+
+/* ---- 翻页 ---- */
+.pn{display:flex;justify-content:space-between;gap:18px;
+  margin:96px 0 64px;border-top:1.5px solid var(--line);padding-top:28px}
+.pn a{text-decoration:none;color:var(--text);max-width:46%;
+  transition:transform .25s cubic-bezier(.34,1.56,.64,1)}
+.pn a:hover{transform:translateY(-3px)}
+.pn .lbl{display:block;font-size:12px;color:var(--text-dim);letter-spacing:.12em;margin-bottom:7px}
+.pn .ttl{font-weight:700;font-size:16px}
+.pn a:hover .ttl{color:var(--accent)}
+.pn .next{margin-left:auto;text-align:right}
+
+/* ---- 移动端：全部单列，吸顶保留 ---- */
+@media(max-width:720px){
+  .page-head{padding-top:84px}
+  .sec{margin-top:56px}
+  .grid6{grid-template-columns:1fr 1fr}
+  .pn{flex-direction:column}
+  .pn a{max-width:100%}
+  .pn .next{margin-left:0;text-align:left}
+}
+@media(max-width:460px){
+  .grid6{grid-template-columns:1fr}
+}

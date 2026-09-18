@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI 模拟面试训练系统 — 孔维邦</title>
+<meta name="description" content="一个会追问、会复盘的面试练习场：岗位建模出题、Agent 追问链、逐题复盘、薄弱点追踪，六环闭环。pgvector 混合检索，按 hit@3 / MRR 选定 RRF。">
+<script>try{var t=localStorage.getItem("kwb-theme"),h=new Date().getHours();if(t){document.documentElement.setAttribute("data-theme",t)}else if(h>=6&&h<18){document.documentElement.setAttribute("data-theme","light")}}catch(e){}</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=JetBrains+Mono:ital,wght@0,400;0,700;1,400&family=Noto+Sans+SC:wght@400;500;700;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/css/site.css">
+<link rel="stylesheet" href="../assets/css/page.css">
+<link rel="stylesheet" href="../assets/css/gua.css">
+</head>
+<body class="pg">
+
+<header class="bar" id="topbar">
+  <div class="bar-in">
+    <nav class="links">
+      <a href="../index.html#about">关于</a>
+      <a href="../index.html#projects">项目</a>
+      <a href="../demo/fallback.html">实验</a>
+      <a href="../index.html#writing">文章</a>
+      <a href="../index.html#contact">联络</a>
+    </nav>
+    <button class="toggle" id="themeToggle" aria-label="切换亮暗模式">
+      <span class="knob">
+        <svg viewBox="0 0 24 24" id="knobIcon"><path id="knobPath" d="M21 12.8A9 9 0 1 1 11.2 3 7 7 0 0 0 21 12.8Z"/></svg>
+      </span>
+    </button>
+  </div>
+  <svg class="gua-rail" viewBox="0 0 1440 80" preserveAspectRatio="none" aria-hidden="true">
+    <path d="M -120 80 L 1560 80"/>
+  </svg>
+</header>
+
+<main id="main">
+<div class="wrap">
+
+  <div class="page-head">
+    <p class="kicker" data-rv>个人项目 · LIVE · 公网部署</p>
+    <h1 class="page-title" data-rv="90">AI 模拟面试<br>训练系统</h1>
+    <p class="page-sub" data-rv="180">一个会追问、会复盘的练习场。按你投的岗位出题，沿着你的回答挖到你说不清的地方，再告诉你怎么补。</p>
+    <div class="meta" data-rv="270">
+      <span>角色 <b>独立开发 · 全栈</b></span>
+      <span>检索 <b>pgvector 混合检索 · RRF 融合</b></span>
+      <span>状态 <b>公网可演示</b></span>
+    </div>
+  </div>
+
+  <div class="sec">
+    <div class="sec-head" data-rv><span class="dash"></span><h2>为什么做它</h2></div>
+    <div class="sec-body prose" data-rv="80">
+      <p>我自己准备面试时发现：看面经和真的被追问是两回事。面经给你「标准答案」，但面试官的杀伤力在<b>第二问、第三问</b>，追问你答案里没说圆的地方。市面上的工具大多停在第一问。</p>
+      <p>所以这个系统不做题库背诵，做<b>追问链</b>：你答完一题，它沿着你的回答继续挖，挖到暴露薄弱点为止，然后逐题复盘。</p>
+    </div>
+  </div>
+
+  <div class="sec">
+    <div class="sec-head" data-rv><span class="dash"></span><h2>六环闭环</h2></div>
+    <div class="sec-body">
+      <div class="grid6">
+        <div class="cell" data-rv data-i="01"><b>岗位建模</b><p>按投递的 JD 抽取考察点，出题不跑偏。</p></div>
+        <div class="cell" data-rv="80" data-i="02"><b>出题</b><p>项目深挖 + 基础 + 场景题，混合出卷。</p></div>
+        <div class="cell" data-rv="160" data-i="03"><b>作答</b><p>语音或文字，真实面试的节奏。</p></div>
+        <div class="cell hl" data-rv data-i="04"><b>追问</b><p>沿你的回答继续挖，直到暴露说不清的地方。</p></div>
+        <div class="cell hl" data-rv="80" data-i="05"><b>复盘</b><p>答后报告：哪里薄弱、为什么、怎么补。</p></div>
+        <div class="cell" data-rv="160" data-i="06"><b>追踪</b><p>薄弱点进下一轮出题池，练到会为止。</p></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="sec">
+    <div class="sec-head" data-rv><span class="dash"></span><h2>一个检索选型决策</h2></div>
+    <div class="sec-body prose" data-rv="80">
+      <p>出题要用岗位资料做 RAG。向量与关键词各有盲区，所以做<b>混合检索</b>，融合策略没有拍脑袋：建评测对比 <code>hit@3</code> 与 <code>MRR</code>，RRF 融合两项指标都最优，才定下来。这也是我后来做生产评测集的雏形：先能度量，再做选择。</p>
+    </div>
+  </div>
+
+  <div class="sec">
+    <div class="sec-head" data-rv><span class="dash"></span><h2>状态</h2></div>
+    <div class="sec-body prose" data-rv="80">
+      <p>系统已公网部署，正在拿自己的求职季当测试集：每场真实面试后复盘一轮，追问链就多一层。</p>
+      <div class="wip">公开演示链接与部署细节整理中，欢迎先聊聊它。</div>
+    </div>
+  </div>
+
+  <div class="pn">
+    <a href="shieldassist.html"><span class="lbl">← 上一个</span><span class="ttl">反诈骗 AI 援助平台</span></a>
+    <a class="next" href="eval-set.html"><span class="lbl">下一个项目 →</span><span class="ttl">生产报告评测集</span></a>
+  </div>
+
+</div>
+</main>
+
+<footer class="foot">© 2026 孔维邦 · 深圳 · 网络工程 2023–2027 · <a href="https://github.com/davidluulc" target="_blank" rel="noopener">github.com/davidluulc</a></footer>
+
+<script src="../assets/js/site.js"></script>
+<script src="../assets/js/gua.js"></script>
+<script>
+SitePage.init();
+/* 咕嘎在导航栏下沿行走：隐形直线轨道，缩至 0.38，漫步避开导航链接与拨杆 */
+/* 咕嘎住进导航栏：迷你体型沿栏漫步，避开左侧空白外的链接区；窄屏回角落待命 */
+GuaPet.init({base:'../assets/gua/',ver:'?v=15',scale:.3,xMin:40,xMax:function(){return innerWidth/2+40},always:true,
+  surfaces:innerWidth>900?[{path:document.querySelector('.gua-rail path'),sp:100,dd:0,delay:0,
+    svg:document.querySelector('.gua-rail'),vbW:1440,vbH:80,driftAmp:0}]:[]});
+</script>
+</body>
+</html>

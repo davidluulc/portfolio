@@ -1,0 +1,19 @@
+/* ============ 咕嘎桌宠样式（design-spec.md §4） ============
+ * 挂载点在 body 顶层 z45（高于导航 z40），任何位置全身可点。
+ * 外层=窗口（overflow:hidden 恰好一格），内层 img=整图，逐帧只 translate。
+ * 备层 visibility:hidden：不绘制、不命中、不耗合成；.warm 仅切换预热两帧。 */
+.gua-mount{position:absolute;left:0;top:0;z-index:45;width:clamp(110px,10vw,160px);
+  pointer-events:none;will-change:transform}
+.gua-mount.fixed{position:fixed}   /* 无行走面页面的角落待命模式 */
+.gua-fly{position:absolute;left:0;right:0;bottom:0;will-change:transform}
+.gua-shadow{position:absolute;left:50%;bottom:-4px;width:66%;height:16px;
+  transform:translateX(-50%);pointer-events:none;
+  background:radial-gradient(ellipse at center,rgba(10,16,40,.26),transparent 68%)}
+.gfr{position:absolute;left:50%;bottom:0;display:block;overflow:hidden;
+  visibility:hidden;opacity:.01;z-index:1;
+  pointer-events:auto;cursor:grab;touch-action:none;user-select:none;-webkit-user-drag:none}
+.gfr.warm{visibility:visible}
+.gfr.on{visibility:visible;opacity:1;z-index:2}
+.gfr:active{cursor:grabbing}
+.gfr img{position:absolute;left:0;top:0;display:block;pointer-events:none;
+  will-change:transform;transform-origin:0 0;user-select:none;-webkit-user-drag:none}

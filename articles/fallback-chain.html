@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>降级链：AI 应用活在生产环境的底线 — 孔维邦</title>
+<meta name="description" content="每个依赖都要有「失败时的样子」。从 8 月 7 日一次线上卡死说起：重试放大、超时分层、模型降级、缓存兜底——把降级做成显式、可观测、可测试的链。">
+<script>try{var t=localStorage.getItem("kwb-theme"),h=new Date().getHours();if(t){document.documentElement.setAttribute("data-theme",t)}else if(h>=6&&h<18){document.documentElement.setAttribute("data-theme","light")}}catch(e){}</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=JetBrains+Mono:ital,wght@0,400;0,700;1,400&family=Noto+Sans+SC:wght@400;500;700;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/css/site.css">
+<link rel="stylesheet" href="../assets/css/page.css">
+<link rel="stylesheet" href="../assets/css/gua.css">
+</head>
+<body class="pg">
+
+<header class="bar" id="topbar">
+  <div class="bar-in">
+    <nav class="links">
+      <a href="../index.html#about">关于</a>
+      <a href="../index.html#projects">项目</a>
+      <a href="../demo/fallback.html">实验</a>
+      <a href="../index.html#writing">文章</a>
+      <a href="../index.html#contact">联络</a>
+    </nav>
+    <button class="toggle" id="themeToggle" aria-label="切换亮暗模式">
+      <span class="knob">
+        <svg viewBox="0 0 24 24" id="knobIcon"><path id="knobPath" d="M21 12.8A9 9 0 1 1 11.2 3 7 7 0 0 0 21 12.8Z"/></svg>
+      </span>
+    </button>
+  </div>
+  <svg class="gua-rail" viewBox="0 0 1440 80" preserveAspectRatio="none" aria-hidden="true">
+    <path d="M -120 80 L 1560 80"/>
+  </svg>
+</header>
+
+<main id="main">
+<div class="wrap">
+
+  <div class="page-head">
+    <p class="kicker" data-rv>文章 · 2026.09 · 约 10 分钟</p>
+    <h1 class="page-title" data-rv="90">降级链：<br>AI 应用活在生产环境的底线</h1>
+    <div class="meta" data-rv="180">
+      <span>关联 <b><a href="../projects/shieldassist.html" style="color:inherit">反诈骗 AI 援助平台</a> · 可交互 Demo 见「实验」</b></span>
+      <span>主题 <b>可靠性工程 · LLM 应用</b></span>
+    </div>
+  </div>
+
+  <div class="article">
+
+    <p data-rv>8 月 7 日，行动报告页面卡死。用户点「生成报告」，转圈，永远转圈。排查结果是个很小的根因：下游返回的 <code>runId</code> 发生漂移，前端拿着旧 id 轮询，永远等不到它要的结果——<b>无限轮询</b>。小根因，大症状，这类事故教我的东西比任何架构文档都多。</p>
+
+    <p data-rv>那天我连发了四个修复：修漂移、把两个串行阶段并发（100s 到 25s）、轮询加 3 分钟超时兜底、结构化输出的重试链做异常分层。修完之后我意识到真正的题目不是这四个补丁，而是：<b>AI 应用活在生产环境，靠的不是它最好的时候有多好，而是它最坏的时候坏到哪。</b>这条「最坏的时候」的路径，就是降级链。</p>
+
+    <h3 data-rv>一、先承认：LLM 是个不稳定的依赖</h3>
+    <p data-rv>传统软件的依赖（数据库、缓存、下游服务）已经有一整套可靠性词汇：超时、重试、熔断、舱壁。LLM 应用把依赖列表加了一行性质完全不同的条目——<b>一个会漂移、会限流、会幻觉、会突然变慢三十倍的黑盒</b>。它不稳定的方向还不一样：限流是快速失败，超时是慢慢失败，内容过滤是看心情失败。</p>
+    <p data-rv>所以 LLM 应用的第一性原理和传统可靠性工程是同一句话：<b>每个依赖都要有「失败时的样子」。</b>不是「希望它不失败」，是提前设计好它失败之后用户看到什么、系统进入什么状态、多久之后尝试恢复。</p>
+
+    <h3 data-rv>二、一条请求的四条命</h3>
+    <p data-rv>把这句话落到实处，我在报告生成链路上画了一条显式的降级链。滚下来看——每一层都是「上一层失败时的样子」：</p>
+
+    <div class="flow">
+      <div class="fstep" data-rv>
+        <b><em>L1</em>主链路：结构化输出 + 分层重试</b>
+        <p>主模型 + 结构化输出约束。重试按异常类型分层：限流类退避重试、格式错误类带着错误信息重问、内容过滤类不重试直接降级——因为重试解决不了价值观拒绝。分层是为了防「重试放大」：一次失败重试三次，超时再各重试三次，链路末端就是 3×3=9 倍延迟，这就是 8 月 7 日差点发生的事。</p>
+      </div>
+      <div class="fstep" data-rv>
+        <b><em>L2</em>备选模型：同格式换引擎</b>
+        <p>主模型不可用时切换备选。关键约束是<b>输出 schema 必须在两层之间完全一致</b>——降级的意义是下游无感，如果换模型要换解析逻辑，那不是降级，是第二套系统。备选层也要有自己的超时，不许它比主层更拖。</p>
+      </div>
+      <div class="fstep" data-rv>
+        <b><em>L3</em>缓存与模板：昨天能用的今天还能用</b>
+        <p>同类案件的近期报告缓存命中，直接给「相似案例参考」并明确标注生成时间；模板兜底则输出结构完整但字段留白的报告，让用户填关键项。<b>宁可给一个诚实的半成品，不给一个自信的废品。</b></p>
+      </div>
+      <div class="fstep hl" data-rv>
+        <b><em>L0</em>底线：错误页 + P0 上报 + 自动恢复</b>
+        <p>全链失败时用户看到的是一句人话（「报告生成遇到问题，已记录，稍后重试」）而不是白屏或无限转圈；错误带上下文进 P0 上报；页面具备自动恢复——故障修复后用户无需刷新。这条来自一次真实事故：浏览器自动翻译插件把页面 DOM 改坏导致整页崩溃，那次的修复（禁译 + 全局错误页 + 自动恢复）后来成为所有页面的标配。</p>
+      </div>
+    </div>
+
+    <h3 data-rv>三、行业词汇表：你不是第一个遇到的人</h3>
+    <p data-rv>降级链的每个环节在可靠性工程里都有成熟名字，LLM 应用不必发明，只需对号入座：</p>
+    <ul>
+      <li data-rv><b>断路器（Circuit Breaker）</b>：Hystrix 时代的老将，Envoy、Resilience4j 至今在用。连续失败到阈值就「跳闸」，一段时间内直接走降级路不再撞墙。LLM 场景的翻译：某个模型连续超时，就先切备选，别让用户替你等它回心转意。</li>
+      <li data-rv><b>重试预算（Retry Budget）</b>：全局限制重试占比，防止「大家都在重试」的雪崩。8 月 7 日教训的正式学名。</li>
+      <li data-rv><b>超时分层（Timeout Budget）</b>：整条链路的超时要按层分配且总和小于用户侧上限——外层 30 秒，内层就不许各设 29 秒。</li>
+      <li data-rv><b>优雅降级（Graceful Degradation）</b>：Web 前端的老传统——JS 挂了 HTML 还在。对应到 AI 产品：模型挂了，产品还剩什么？能浏览历史、能看缓存、能手动填模板，就是还活着。</li>
+      <li data-rv><b>舱壁隔离（Bulkhead）</b>：把资源分舱，一舱进水不沉全船。AI 应用里的翻译：报告生成和会话服务用独立的模型配额与队列，别让一个重任务把轻交互全堵死。</li>
+    </ul>
+
+    <h3 data-rv>四、降级三定律</h3>
+    <p data-rv>把这些攒成可以贴在工位上的三条：</p>
+    <ul>
+      <li data-rv><b>显式</b>：降级路径画在架构图上、写在代码里，不许「到时候再说」。每层触发条件和出口状态有名字、有编号，和正常链路同一级别的代码待遇。</li>
+      <li data-rv><b>可观测</b>：每层降级都要留下痕迹——哪次请求走到了哪层、为什么。降级静悄悄地发生，等于系统在带病上班而你不知道。这也是我把「报告可观测性」和重试、分层一起做的原因（那次是 <code>PR #30</code>）。</li>
+      <li data-rv><b>可测试</b>：降级路径要能演练。故障注入不是 SRE 的专利，砍掉模型 API key 跑一遍集成测试，看看系统是按设计降级还是原地爆炸——炸了 better now than in production。</li>
+    </ul>
+
+    <h3 data-rv>五、底线的哲学</h3>
+    <p data-rv>最后说点价值观。做 AI 应用的人容易把注意力全放在能力上限——更强的模型、更巧的 prompt、更炫的 Agent。但用户信任的建立方式恰好相反：<b>上限决定用户为什么来，底线决定用户还来不来。</b>反诈骗援助场景里，一个受骗后来求助的用户，看到无限转圈的耐心是零。</p>
+    <blockquote data-rv>降级链不是悲观主义，是诚实主义：承认依赖会失败，承认自己会犯错，然后把每一种失败都安排好体面的下场。系统真正的可靠性，藏在它最坏的那一刻里。</blockquote>
+    <p data-rv>我把这条链做成了可交互的 Demo（见导航「实验」），你可以亲手掐断每一层，看请求怎么走、用户看到什么。可靠性这东西，讲十遍不如亲手弄坏一遍。</p>
+
+  </div>
+
+  <div class="pn">
+    <a href="eval-first.html"><span class="lbl">← 上一篇</span><span class="ttl">评测先行</span></a>
+    <a class="next" href="ai-division.html"><span class="lbl">下一篇 →</span><span class="ttl">哪些归 AI，哪些归我</span></a>
+  </div>
+
+</div>
+</main>
+
+<footer class="foot">© 2026 孔维邦 · 深圳 · 网络工程 2023–2027 · <a href="https://github.com/davidluulc" target="_blank" rel="noopener">github.com/davidluulc</a></footer>
+
+<script src="../assets/js/site.js"></script>
+<script src="../assets/js/gua.js"></script>
+<script>
+SitePage.init();
+GuaPet.init({base:'../assets/gua/',ver:'?v=15',scale:.3,xMin:40,xMax:function(){return innerWidth/2+40},always:true,
+  surfaces:innerWidth>900?[{path:document.querySelector('.gua-rail path'),sp:100,dd:0,delay:0,
+    svg:document.querySelector('.gua-rail'),vbW:1440,vbH:80,driftAmp:0}]:[]});
+</script>
+</body>
+</html>

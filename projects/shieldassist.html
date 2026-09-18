@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>反诈骗 AI 援助平台 · 生产可靠性 — 孔维邦</title>
+<meta name="description" content="独立负责生产可靠性：精度根因诊断、可靠性专项、两次线上事故闭环、全量安全审计推动多项高危修复。">
+<script>try{var t=localStorage.getItem("kwb-theme"),h=new Date().getHours();if(t){document.documentElement.setAttribute("data-theme",t)}else if(h>=6&&h<18){document.documentElement.setAttribute("data-theme","light")}}catch(e){}</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=JetBrains+Mono:ital,wght@0,400;0,700;1,400&family=Noto+Sans+SC:wght@400;500;700;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/css/site.css">
+<link rel="stylesheet" href="../assets/css/page.css">
+<link rel="stylesheet" href="../assets/css/gua.css">
+</head>
+<body class="pg">
+
+<header class="bar" id="topbar">
+  <div class="bar-in">
+    <nav class="links">
+      <a href="../index.html#about">关于</a>
+      <a href="../index.html#projects">项目</a>
+      <a href="../demo/fallback.html">实验</a>
+      <a href="../index.html#writing">文章</a>
+      <a href="../index.html#contact">联络</a>
+    </nav>
+    <button class="toggle" id="themeToggle" aria-label="切换亮暗模式">
+      <span class="knob">
+        <svg viewBox="0 0 24 24" id="knobIcon"><path id="knobPath" d="M21 12.8A9 9 0 1 1 11.2 3 7 7 0 0 0 21 12.8Z"/></svg>
+      </span>
+    </button>
+  </div>
+  <svg class="gua-rail" viewBox="0 0 1440 80" preserveAspectRatio="none" aria-hidden="true">
+    <path d="M -120 80 L 1560 80"/>
+  </svg>
+</header>
+
+<main id="main">
+<div class="wrap">
+
+  <div class="page-head">
+    <p class="kicker" data-rv>实习 · 2026.07-09 · 某 AI 法律科技公司</p>
+    <h1 class="page-title" data-rv="90">反诈骗 AI 援助平台<br>生产可靠性</h1>
+    <p class="page-sub" data-rv="180">独立负责生产可靠性。两个月，29 个合并 PR，把精度、可靠性、安全一条线管到底。</p>
+    <div class="meta" data-rv="270">
+      <span>角色 <b>AI 应用开发实习生 · 独立负责生产可靠性</b></span>
+      <span>技术栈 <b>Python · LangGraph · MySQL · Gateway</b></span>
+    </div>
+  </div>
+
+  <div class="sec">
+    <div class="sec-head" data-rv><span class="dash"></span><h2>起点</h2></div>
+    <div class="sec-body prose" data-rv="80">
+      <p>7 月 3 日入职。第一周在排一个深坑：数据库迁移只建了 <code>38/56</code> 张表，gateway 一启动就 panic（<code>issue #16</code>）。彼时系统没有人对它当前的状态负责。</p>
+      <p>于是我的工作从「修 bug」变成「先让这个系统值得被修」：把所有问题<b>立案、编号、排优先级</b>，然后一条一条闭环。下面四条证据链，就是这个方法跑两个月的结果。</p>
+    </div>
+  </div>
+
+  <div class="sec">
+    <div class="sec-head" data-rv><span class="dash"></span><h2>四条证据链</h2></div>
+    <div class="sec-body">
+      <div class="chain">
+        <div class="step" data-rv>
+          <div class="ref-line">链 A · 精度病根 <span>从诊断到验证的闭环</span></div>
+          <p><span class="ref">issue #24</span> 立案两大线上精度问题 → <span class="ref">PR #29</span> 病根①否定检测：原信号匹配用 <code>strings.Contains</code>，「我從沒投資過」被误判为投资诈骗；抽出纯函数后，命中信号词再检查前方窗口内有无否定词，否定词清单刻意克制（排除「非」防误伤「非官方」，排除裸 no 防「note」），另一候选方案经调查后主动撤销，取舍完整留在 PR 正文 → <span class="ref">PR #30</span> 病根②报告可观测性 + 重试 + 分层模式 → 8 月底生产对照：<b>AI 写作率 0% → 87%</b>（口径已修正）。</p>
+        </div>
+        <div class="step" data-rv="80">
+          <div class="ref-line">链 B · 8 月 7 日可靠性日 <span>一个根因，四连发</span></div>
+          <p><span class="ref">issue #34</span> 行动报告卡转圈：runId 漂移致前端无限轮询。同日 <span class="ref">PR #35</span> 修漂移、<span class="ref">#36</span> fraud_fact 与 action_report 并发（<b>100s → 25s</b>）、<span class="ref">#37</span> 轮询 3 分钟超时兜底、<span class="ref">#38</span> 结构化输出重试链异常分层（防 3 倍延迟放大）。一天之内，一个根因 issue 加四个修复与优化 PR。</p>
+        </div>
+        <div class="step" data-rv="160">
+          <div class="ref-line">链 C · 两次线上事故 <span>两次闭环</span></div>
+          <p><span class="ref">issue #51</span> 浏览器自动翻译致立案向导整页崩溃 → <span class="ref">PR #52</span> 禁译 + 全局错误页 P0 上报 + 自动恢复（止血发版生产）。<span class="ref">issue #59</span> 同签名二次 crash：注册页揭码瞬间崩溃，第一批修复的覆盖缺口 → <span class="ref">PR #60</span> 登录页退出翻译 + 表单区局部错误边界。事故正式 issue 化，边界被第二批补全。</p>
+        </div>
+        <div class="step" data-rv="240">
+          <div class="ref-line">链 D · 全量安全审计 <span>发现 → 确证 → 立案 → 跟踪</span></div>
+          <p><span class="ref">PR #46</span> 19 份审计文档：API 底册（Gateway / gRPC / 工作流引擎 / OCR / Speech 各域路由全量登记）+ 逐操作四问矩阵 + <code>file:line</code> 级证据。高危发现全部正式 issue 立案，带编号、带证据、带修复批次，<b>推动多项高危问题修复</b>；待裁决项整理成清单推动决策，P0 只写到类别级，利用路径不上公网。</p>
+        </div>
+      </div>
+
+      <div class="nums">
+        <div class="num gold" data-rv><b data-count="25" data-from="100" data-suffix="s">25s</b><span>行动报告 · 原 100s</span></div>
+        <div class="num" data-rv="80"><b data-count="87" data-from="0" data-suffix="%">87%</b><span>AI 写作率 · 原 0%</span></div>
+        <div class="num gold" data-rv="160"><b data-count="8" data-from="33" data-suffix="s">8s</b><span>案件分析 · 原 33s</span></div>
+        <div class="num" data-rv="240"><b>29</b><span>合并 PR · 两个月</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="pn">
+    <a href="../index.html"><span class="lbl">← 返回</span><span class="ttl">首页 · 项目一览</span></a>
+    <a class="next" href="ai-interview.html"><span class="lbl">下一个项目 →</span><span class="ttl">AI 模拟面试训练系统</span></a>
+  </div>
+
+</div>
+</main>
+
+<footer class="foot">© 2026 孔维邦 · 深圳 · 网络工程 2023–2027 · <a href="https://github.com/davidluulc" target="_blank" rel="noopener">github.com/davidluulc</a></footer>
+
+<script src="../assets/js/site.js"></script>
+<script src="../assets/js/gua.js"></script>
+<script>
+SitePage.init();
+/* 咕嘎在导航栏下沿行走：隐形直线轨道，缩至 0.38，漫步避开导航链接与拨杆 */
+/* 咕嘎住进导航栏：迷你体型沿栏漫步，避开左侧空白外的链接区；窄屏回角落待命 */
+GuaPet.init({base:'../assets/gua/',ver:'?v=15',scale:.3,xMin:40,xMax:function(){return innerWidth/2+40},always:true,
+  surfaces:innerWidth>900?[{path:document.querySelector('.gua-rail path'),sp:100,dd:0,delay:0,
+    svg:document.querySelector('.gua-rail'),vbW:1440,vbH:80,driftAmp:0}]:[]});
+</script>
+</body>
+</html>

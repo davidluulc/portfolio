@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>孔维邦 · AI 应用开发（深圳）</title>
+<meta name="description" content="孔维邦的求职作品集：2027 届网络工程，深圳，AI 应用开发方向。降级链、评测、可观测与安全。">
+<script>try{var t=localStorage.getItem("kwb-theme"),h=new Date().getHours();if(t){document.documentElement.setAttribute("data-theme",t)}else if(h>=6&&h<18){document.documentElement.setAttribute("data-theme","light")}}catch(e){}</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=JetBrains+Mono:ital,wght@0,400;0,700;1,400&family=Noto+Sans+SC:wght@400;500;700;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/site.css">
+<link rel="stylesheet" href="assets/css/gua.css">
+</head>
+<body>
+
+<!-- 首屏风景：零文字标题画面（云海语法见 design-spec.md §3.3） -->
+<div class="landscape" aria-hidden="true">
+  <svg style="position:absolute;width:0;height:0">
+    <defs>
+      <linearGradient id="pgFar" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" style="stop-color:var(--cloud-far-hi)"/>
+        <stop offset="1" style="stop-color:var(--cloud-far-lo)"/>
+      </linearGradient>
+      <linearGradient id="pgMid" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" style="stop-color:var(--cloud-mid-hi)"/>
+        <stop offset="1" style="stop-color:var(--cloud-mid-lo)"/>
+      </linearGradient>
+    </defs>
+  </svg>
+  <svg viewBox="0 0 1440 1000" preserveAspectRatio="xMidYMax slice">
+    <g class="pv" data-sp="8"><g class="drift" style="--dd:18s">
+      <path class="cl" fill="var(--cloud-far)" d="M-120 500 C -100 462 -40 444 30 446 C 66 448 86 458 104 468 C 116 474 128 474 140 470 C 156 462 178 448 204 442 C 224 438 240 438 254 444 C 274 444 296 466 318 486 C 332 498 348 506 368 508 C 396 506 420 496 442 484 C 466 470 498 462 534 464 C 566 467 592 480 614 494 C 630 502 646 506 662 504 C 684 501 700 508 716 516 C 734 524 752 527 770 526 C 786 525 796 517 812 510 C 828 504 844 504 862 504 C 890 504 916 512 938 522 C 956 530 976 534 998 532 C 1020 530 1040 526 1060 526 C 1082 526 1098 531 1112 536 C 1122 539 1132 538 1144 534 C 1160 530 1174 528 1190 528 C 1218 528 1244 536 1266 546 C 1290 556 1316 562 1344 560 C 1380 557 1440 552 1560 548 V 1010 H -120 Z"/>
+    </g></g>
+    <g class="pv" data-sp="22"><g class="drift" style="--dd:14s;animation-delay:-6s">
+      <path class="cl" fill="var(--cloud-mid)" d="M-120 662 C -50 648 20 642 84 648 C 116 652 138 662 164 658 C 196 626 268 610 348 620 C 392 626 424 646 458 656 C 490 664 522 664 554 658 C 596 640 652 630 712 636 C 748 641 776 654 804 660 C 836 668 868 667 900 660 C 944 614 1024 588 1116 592 C 1168 595 1206 612 1238 624 C 1264 633 1292 631 1318 624 C 1352 594 1420 570 1490 568 C 1520 568 1544 574 1560 578 V 1010 H -120 Z"/>
+    </g></g>
+    <g class="pv" data-sp="88"><g class="drift" style="--dd:11s;animation-delay:-9s">
+      <path class="cl" fill="var(--bg)" d="M-120 850 C -60 768 80 734 220 756 C 280 766 320 792 356 806 C 388 818 420 812 456 796 C 510 774 580 772 640 792 C 684 810 716 832 754 846 C 796 860 840 862 884 856 C 944 838 1030 834 1110 846 C 1180 858 1240 872 1320 878 C 1400 884 1480 880 1560 872 V 1010 H -120 Z"/>
+    </g></g>
+  </svg>
+  <div class="avatar-pv pv" data-sp="60"><div class="avatar-sticker"><img src="assets/img/avatar.jpg" alt="孔维邦"></div></div>
+  <div class="puff cl far drift" style="left:10vw;top:15vh;width:96px;--dd:7s;--dx:58px;animation-delay:-2s"><svg viewBox="0 0 100 60"><path d="M12 46 C 2 44 -2 34 4 26 C 8 20 16 18 22 20 C 24 10 36 4 48 8 C 56 10 62 16 64 22 C 74 18 86 24 88 34 C 96 38 96 48 86 50 L 20 50 C 14 50 12 48 12 46 Z"/></svg></div>
+  <div class="puff cl far drift" style="left:68vw;top:6vh;width:66px;--dd:9s;--dx:42px;animation-delay:-5s"><svg viewBox="0 0 100 60"><path d="M14 43 C 6 41 5 32 12 28 C 17 25 24 26 28 29 C 31 20 43 16 52 21 C 58 24 61 30 60 35 C 67 34 74 38 75 44 C 76 49 71 52 64 52 L 24 52 C 17 52 14 50 14 43 Z"/></svg></div>
+  <div class="puff cl mid drift" style="left:40vw;top:24vh;width:120px;--dd:5.5s;--dx:84px;animation-delay:-1.5s"><svg viewBox="0 0 100 60"><path d="M12 42 C 3 40 1 30 9 24 C 16 19 27 19 33 24 C 36 14 50 10 61 15 C 69 19 72 27 70 34 C 79 33 88 38 88 45 C 88 50 83 53 75 53 L 22 53 C 14 53 12 49 12 42 Z"/></svg></div>
+  <div class="puff cl far drift" style="left:60vw;top:12vh;width:62px;--dd:8s;--dx:46px;animation-delay:-3.5s"><svg viewBox="0 0 100 60"><path d="M10 45 C 2 42 1 33 8 28 C 13 24 21 24 26 27 C 28 16 42 10 54 14 C 62 17 66 23 67 29 C 76 26 88 32 89 41 C 90 47 84 51 76 51 L 20 51 C 13 51 10 49 10 45 Z"/></svg></div>
+  <div class="puff cl mid drift" style="left:78vw;top:28vh;width:84px;--dd:6.5s;--dx:70px;animation-delay:-4.5s"><svg viewBox="0 0 100 60"><path d="M6 46 C -1 43 0 34 7 30 C 12 27 19 27 24 30 C 25 22 33 17 42 18 C 48 19 53 22 55 27 C 58 19 68 15 77 18 C 84 21 88 27 88 33 C 94 32 99 36 99 42 C 99 48 94 51 87 51 L 16 51 C 9 51 6 49 6 46 Z"/></svg></div>
+</div>
+
+<header class="bar" id="topbar">
+  <div class="bar-in">
+    <nav class="links">
+      <a href="#about">关于</a>
+      <a href="#projects">项目</a>
+      <a href="demo/fallback.html">实验</a>
+      <a href="#writing">文章</a>
+      <a href="#contact">联络</a>
+    </nav>
+    <button class="toggle" id="themeToggle" aria-label="切换亮暗模式">
+      <span class="knob">
+        <svg viewBox="0 0 24 24" id="knobIcon"><path id="knobPath" d="M21 12.8A9 9 0 1 1 11.2 3 7 7 0 0 0 21 12.8Z"/></svg>
+      </span>
+    </button>
+  </div>
+</header>
+
+<main id="main">
+<div class="wrap">
+
+  <div class="intro" id="about">
+    <div class="stage">
+    <h1 data-scramble>你好，我是<span class="hl">孔维邦</span></h1>
+    <p class="motto" data-scramble="350">时间站在我这边</p>
+  </div>
+    <p class="who">一个憧憬未来的开发者。</p>
+    <p class="lede">2027 届网络工程，在深圳做 AI 应用开发。2026.07–09 独立负责一个反诈骗 AI 援助平台的生产可靠性：<b>降级链、评测、可观测与安全</b>。</p>
+    <div class="cta">
+      <a class="btn" href="#projects">看看我做过的</a>
+      <a class="btn ghost" href="#contact">联系我</a>
+    </div>
+    <div class="stats">
+      <div class="stat"><div class="v">100<i>→</i>25s</div><div class="k">行动报告生成</div></div>
+      <div class="stat"><div class="v">31<i>/</i>29</div><div class="k">PR 与合并</div></div>
+      <div class="stat"><div class="v">90<i>份</i></div><div class="k">生产报告评测集</div></div>
+      <div class="stat"><div class="v">0<i>→</i>87%</div><div class="k">AI 写作率 · 口径修正</div></div>
+    </div>
+  </div>
+
+  <div class="sec" id="projects">
+    <div class="sec-head"><span class="dash"></span><h2>项目</h2></div>
+    <a class="proj" href="projects/shieldassist.html">
+      <span class="tag">实习 · 2026.07–09</span>
+      <h3>反诈骗 AI 援助平台 · 生产可靠性</h3>
+      <p>接手停摆的外包系统。精度根因诊断、可靠性专项治理、两次线上事故闭环、全量安全审计推动多项高危修复、客服会话与异步文书全栈交付。</p>
+      <span class="go">读完整项目 <span class="arrow">→</span></span>
+    </a>
+    <a class="proj" href="projects/ai-interview.html">
+      <span class="tag">个人项目 · LIVE</span>
+      <h3>AI 模拟面试训练系统</h3>
+      <p>六环闭环练习场：RAG 出题、Agent 追问、逐题复盘。pgvector 混合检索，按 hit@3 / MRR 选定 RRF，公网可演示。</p>
+      <span class="go">读完整项目 <span class="arrow">→</span></span>
+    </a>
+    <a class="proj" href="projects/eval-set.html">
+      <span class="tag">阶段完成</span>
+      <h3>生产报告评测集</h3>
+      <p>给 90 份生产报告定验收标准，让「AI 写得好不好」变成能查的事。方法论沉淀为文章《评测先行》。</p>
+      <span class="go">读完整项目 <span class="arrow">→</span></span>
+    </a>
+  </div>
+
+  <div class="sec" id="writing">
+    <div class="sec-head"><span class="dash"></span><h2>文章</h2></div>
+    <a class="art-row" href="articles/eval-first.html"><span class="at" data-scramble>评测先行：为什么我先给 AI 建了考场，再谈优化</span><span class="ad">2026.09</span></a>
+    <a class="art-row" href="articles/fallback-chain.html"><span class="at" data-scramble="140">降级链：AI 应用活在生产环境的底线</span><span class="ad">2026.09</span></a>
+    <a class="art-row" href="articles/ai-division.html"><span class="at" data-scramble="280">哪些归 AI，哪些归我</span><span class="ad">2026.09</span></a>
+  </div>
+
+  <div class="contact-card" id="contact">
+    <h2>聊一聊？</h2>
+    <p>在找 AI 应用开发的岗位，2027 届校招或正式岗都行。<br>Agent 工程化、降级链设计、评测体系，随时欢迎来聊。</p>
+    <button class="btn mail-btn" id="mailBtn">d77013643@gmail.com</button>
+  </div>
+
+</div>
+</main>
+
+<footer class="foot">© 2026 孔维邦 · 深圳 · 网络工程 2023–2027 · <a href="https://github.com/davidluulc" target="_blank" rel="noopener">github.com/davidluulc</a></footer>
+
+<script src="assets/js/site.js"></script>
+<script src="assets/js/gua.js"></script>
+<script>
+SitePage.init();
+GuaPet.init({base:'assets/gua/',ver:'?v=15'});   /* 自动探测 .landscape 云丘为行走面 */
+</script>
+</body>
+</html>
