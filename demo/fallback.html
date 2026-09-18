@@ -14,8 +14,10 @@
 <link rel="stylesheet" href="../assets/css/gua.css">
 <style>
 /* ============ 降级链实验室（页面专属） ============ */
+/* 实验室是三列网格，正文列放宽到 1180px（全站 wrap 840px 装不下舞台） */
+.wrap{max-width:1180px}
 .lab{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(280px,1fr);gap:22px;margin-top:44px}
-@media(max-width:980px){.lab{grid-template-columns:1fr}}
+@media(max-width:1140px){.lab{grid-template-columns:1fr}}
 
 /* ---- 舞台：链路图 ---- */
 .stage{position:relative;background:var(--bg-card);border:1.5px solid var(--line);border-radius:22px;
