@@ -77,14 +77,15 @@
 .node.goldhit{box-shadow:0 0 0 4px color-mix(in srgb,var(--gold) 30%,transparent)}
 .node.src{cursor:default;border-style:dashed}
 .node.out{cursor:default}
-/* 整卡翻页：悬停 L2 以上边为轴向上掀，悬停 L3 以下边为轴向下翻——让出概念卡 */
-#nOut{transform:translateZ(16px);transition:transform .5s cubic-bezier(.34,1.4,.64,1),transform-origin 0s,box-shadow .3s}
+/* 整卡翻页：绕左缘立起（竖直轴不被桌板俯仰抵消，侧立面立体感最强），
+   悬停 L2 向观察者方向开门、悬停 L3 向桌板深处收——两种都完全让出右侧概念卡 */
+#nOut{transform:translateZ(16px);transition:transform .55s cubic-bezier(.34,1.3,.64,1),box-shadow .3s}
 #nL2:hover ~ #nOut,#nL2:focus-visible ~ #nOut{
-  transform-origin:50% 0;transform:rotateX(-68deg);
-  box-shadow:0 22px 34px -16px rgba(16,22,48,.5)}
+  transform-origin:left center;transform:translateZ(30px) rotateY(-72deg);
+  box-shadow:26px 30px 44px -18px rgba(16,22,48,.55)}
 #nL3:hover ~ #nOut,#nL3:focus-visible ~ #nOut{
-  transform-origin:50% 100%;transform:rotateX(68deg);
-  box-shadow:0 -22px 34px -16px rgba(16,22,48,.5)}
+  transform-origin:left center;transform:translateZ(30px) rotateY(-72deg) translateY(-14px);
+  box-shadow:26px -26px 44px -18px rgba(16,22,48,.55)}
 .lab-grid{position:relative;z-index:1;display:grid;
   grid-template-columns:172px 1fr 190px;grid-template-rows:repeat(4,auto);
   gap:36px 14px;align-items:start;justify-items:center}
