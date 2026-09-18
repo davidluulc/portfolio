@@ -34,9 +34,13 @@
   -webkit-mask-image:radial-gradient(85% 85% at 50% 60%,#000 34%,transparent 100%);
   mask-image:radial-gradient(85% 85% at 50% 60%,#000 34%,transparent 100%)}
 .stage svg.wires{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
-.wire{stroke:var(--line);stroke-width:2.5;fill:none;transition:stroke .4s}
+.wire{stroke:var(--line);stroke-width:2.5;fill:none;transition:stroke .4s,stroke-width .3s,opacity .3s}
 .wire.hot{stroke:var(--accent)}
 .wire.fall{stroke:var(--gold);stroke-dasharray:7 6;animation:dashFlow 1.5s linear infinite}
+.wire.lit{stroke:var(--accent);stroke-width:4.5;filter:drop-shadow(0 0 5px var(--accent))}
+.wire.lit.goldline{stroke:var(--gold);filter:drop-shadow(0 0 5px var(--gold))}
+.wire.lit.badline{stroke:var(--pink);filter:drop-shadow(0 0 5px var(--pink))}
+.wire.dim{opacity:.25}
 @keyframes dashFlow{to{stroke-dashoffset:-26}}
 @media(prefers-reduced-motion:reduce){.wire.fall{animation:none}}
 .node{position:relative;z-index:2;width:172px;background:var(--bg);border:2px solid var(--line);
@@ -108,6 +112,27 @@
 .trail.gold{background:var(--gold)}
 .trail.bad{background:var(--pink)}
 @keyframes trailFade{to{opacity:0}}
+
+/* ---- 图例（舞台顶部浮层，不参与 3D） ---- */
+.legend{position:absolute;top:12px;left:16px;z-index:6;display:flex;flex-wrap:wrap;gap:6px 18px;
+  font-size:11px;color:var(--text-dim);pointer-events:none;letter-spacing:.02em}
+.legend i{display:inline-block;vertical-align:-1px;margin-right:5px}
+.legend .d{width:9px;height:9px;border-radius:50%;
+  background:radial-gradient(circle at 34% 30%,#fff 0 22%,var(--accent) 60%);box-shadow:0 0 6px var(--accent)}
+.legend .d.g{background:radial-gradient(circle at 34% 30%,#fff 0 22%,var(--gold) 60%);box-shadow:0 0 6px var(--gold)}
+.legend .d.b{background:radial-gradient(circle at 34% 30%,#fff 0 22%,var(--pink) 60%);box-shadow:0 0 6px var(--pink)}
+.legend .w{width:24px;height:3px;border-radius:2px;background:var(--accent)}
+.legend .w.g{background:repeating-linear-gradient(90deg,var(--gold) 0 5px,transparent 5px 9px)}
+
+/* ---- 解说字幕条 ---- */
+.narr{margin-top:14px;padding:12px 18px;border-radius:12px;background:var(--bg-card);
+  border:1.5px solid var(--line);display:flex;align-items:center;gap:12px;
+  font-family:"JetBrains Mono","Noto Sans SC",monospace;font-size:13px;color:var(--text)}
+.narr .led{width:9px;height:9px;border-radius:50%;background:var(--accent);flex:none;
+  transition:background .3s;box-shadow:0 0 8px var(--accent)}
+.narr.gold .led{background:var(--gold);box-shadow:0 0 8px var(--gold)}
+.narr.bad .led{background:var(--pink);box-shadow:0 0 8px var(--pink)}
+.narr #narrText{line-height:1.7}
 
 /* ---- 控制台 ---- */
 .console{display:flex;flex-direction:column;gap:18px}
@@ -187,7 +212,16 @@
   </div>
 
   <div class="lab" data-rv>
+    <div>
     <div class="stage" id="stage">
+      <div class="legend" aria-hidden="true">
+        <span><i class="d"></i>一次请求</span>
+        <span><i class="d g"></i>降级中</span>
+        <span><i class="d b"></i>失败</span>
+        <span><i class="w"></i>成功路径</span>
+        <span><i class="w g"></i>降级路径</span>
+        <span>· 点击节点注入故障</span>
+      </div>
       <div class="deck" id="deck">
         <svg class="wires" id="wires"></svg>
         <div class="lab-grid">
@@ -227,6 +261,8 @@
         </div>
         </div>
       </div>
+    </div>
+    <div class="narr" id="narr"><span class="led"></span><span id="narrText">点一个「场景剧本」开始，或直接点击节点注入故障——看请求怎么活下来。</span></div>
     </div>
 
     <aside class="console">
@@ -363,7 +399,7 @@ function curve(a,b){
   return 'M '+a.x.toFixed(1)+' '+a.y.toFixed(1)+' Q '+cx.toFixed(1)+' '+cy.toFixed(1)+' '+b.x.toFixed(1)+' '+b.y.toFixed(1);
 }
 function drawWires(){
-  if(innerWidth<=760){wires.innerHTML='';return}
+  if(innerWidth<=760){wires.innerHTML='';WIRES.forEach(function(w){w.el=null});return}
   var svgNs='http://www.w3.org/2000/svg';
   [].slice.call(wires.children).forEach(function(c){c.remove()});
   WIRES.forEach(function(w){
@@ -371,7 +407,14 @@ function drawWires(){
     p.setAttribute('d',curve(center(w.from),center(w.to)));
     p.setAttribute('class','wire '+(w.cls==='fall'?'fall':''));
     wires.appendChild(p);
+    w.el=p;
   });
+}
+function wireBetween(from,to){
+  for(var i=0;i<WIRES.length;i++){
+    if(WIRES[i].from===from&&WIRES[i].to===to)return WIRES[i].el;
+  }
+  return null;
 }
 
 /* ---- 请求点动画（DOM + rAF 沿贝塞尔，落在 3D 桌板上，带拖尾） ---- */
@@ -382,7 +425,13 @@ function trail(x,y,cls){
   deck.appendChild(t);
   setTimeout(function(){t.remove()},580);
 }
-function travel(fromId,toId,dur,cls,onDone){
+/* ---- 解说字幕 ---- */
+function narrate(text,cls){
+  var n=$('narr');
+  $('narrText').textContent=text;
+  n.className='narr'+(cls?' '+cls:'');
+}
+function travel(fromId,toId,dur,cls,onDone,msg){
   var a=center(fromId), b=center(toId);
   var dx=b.x-a.x, dy=b.y-a.y, len=Math.hypot(dx,dy)||1;
   var mx=(a.x+b.x)/2-dy/len*34, my=(a.y+b.y)/2+dx/len*34;
@@ -390,6 +439,14 @@ function travel(fromId,toId,dur,cls,onDone){
   d.className='dot'+(cls?' '+cls:'');
   d.style.transform='translate3d('+a.x+'px,'+a.y+'px,20px)';
   deck.appendChild(d);
+  /* 路径高亮：请求走哪条线，哪条线亮 */
+  var w=fromId===toId?null:wireBetween(fromId,toId);
+  if(w){
+    w.classList.add('lit');
+    if(cls==='gold')w.classList.add('goldline');
+    else if(cls==='bad')w.classList.add('badline');
+  }
+  if(msg)narrate(msg,cls);
   var t0=null,frame=0;
   function step(ts){
     if(t0===null)t0=ts;
@@ -399,9 +456,17 @@ function travel(fromId,toId,dur,cls,onDone){
     d.style.transform='translate3d('+x.toFixed(1)+'px,'+y.toFixed(1)+'px,20px)';
     if(++frame%4===0)trail(x,y,cls);
     if(p<1)requestAnimationFrame(step);
-    else{d.remove();if(onDone)onDone()}
+    else{
+      d.remove();
+      if(w)w.classList.remove('lit','goldline','badline');
+      if(onDone)onDone();
+    }
   }
-  if(reduce){d.remove();if(onDone)setTimeout(onDone,50);return}
+  if(reduce){
+    d.remove();
+    if(w)w.classList.remove('lit','goldline','badline');
+    if(onDone)setTimeout(onDone,50);return;
+  }
   requestAnimationFrame(step);
 }
 function pulse(id,gold){
@@ -417,41 +482,44 @@ function decide(){
   /* 返回 {segs:[{to,dur,cls}], outcome, cls, label, lat} */
   var L1=NODES[0].state, L2=NODES[1].state, L3=NODES[2].state, L0=NODES[3].state;
   var segs=[], T=0;
-  function hop(from,to,dur,cls){segs.push({from:from,to:to,dur:dur,cls:cls});T+=dur}
+  function hop(from,to,dur,cls,msg){segs.push({from:from,to:to,dur:dur,cls:cls,msg:msg});T+=dur}
 
   /* L1 */
-  if(L1==='ok'){hop('nSrc','nL1',rnd(500,850));hop('nL1','nOut',rnd(120,220));
+  if(L1==='ok'){hop('nSrc','nL1',rnd(500,850),null,'#'+(seq+1)+' 进入 L1 主模型，生成中…');
+    hop('nL1','nOut',rnd(120,220),null,'✓ L1 直接生成完整报告');
     return fin(segs,T,true,'ok','完整报告','L1 · '+Math.round(T)+'ms')}
   if(L1==='rate'&&retryMode==='layered'&&Math.random()<.5){
-    hop('nSrc','nL1',rnd(120,200));hop('nL1','nL1',rnd(400,600));
-    hop('nL1','nOut',rnd(120,220));
+    hop('nSrc','nL1',rnd(120,200),null,'#'+(seq+1)+' 进入 L1，被限流（429）——退避后重试');
+    hop('nL1','nL1',rnd(400,600),'gold','退避等待，重试中…');
+    hop('nL1','nOut',rnd(120,220),null,'✓ 退避重试成功，完整报告');
     return fin(segs,T,true,'ok','完整报告（退避后）','L1 重试 · '+Math.round(T)+'ms')}
   if(L1==='rate'&&retryMode==='infinite'){
-    hop('nSrc','nL1',rnd(120,200));
-    for(var i=0;i<3;i++)hop('nL1','nL1',rnd(550,750));   /* 重试放大现场 */
-    hop('nL1','nOut',rnd(120,220));
+    hop('nSrc','nL1',rnd(120,200),null,'#'+(seq+1)+' 进入 L1 被限流 × 无限重试——注意延迟正在被放大');
+    for(var i=0;i<3;i++)hop('nL1','nL1',rnd(550,750),'gold','第 '+(i+2)+' 次重试…延迟累计 '+Math.round(T)+'ms');
+    hop('nL1','nOut',rnd(120,220),null,'✓ 最终成功——但用户等了 '+Math.round(T)+'ms，这就是重试放大');
     return fin(segs,T,true,'ok','完整报告（重试放大）','L1 ×4 重试 · '+Math.round(T)+'ms')}
   /* L1 失败 → 降级 */
-  hop('nSrc','nL1',L1==='down'?rnd(80,140):L1==='rate'?rnd(120,200):rnd(300,450));
-  hop('nL1','nL2',rnd(150,260),'gold');
+  hop('nSrc','nL1',L1==='down'?rnd(80,140):L1==='rate'?rnd(120,200):rnd(300,450),null,
+    L1==='down'?'#'+(seq+1)+' 进入 L1——宕机，无响应':L1==='rate'?'#'+(seq+1)+' 进入 L1 被限流，直接放弃重试':'#'+(seq+1)+' 进入 L1——超时，吃掉延迟预算');
+  hop('nL1','nL2',rnd(150,260),'gold','L1 失败 → 降级至 L2 备选模型（下游无感）');
 
   /* L2 */
-  if(L2==='ok'){hop('nL2','nOut',rnd(1100,1500));
+  if(L2==='ok'){hop('nL2','nOut',rnd(1100,1500),null,'L2 接管生成，慢一点但完整…');
     return fin(segs,T,true,'deg','完整报告 · 备选','L2 降级 · '+Math.round(T)+'ms')}
-  hop('nL2','nL3',rnd(120,220),'gold');
+  hop('nL2','nL3',rnd(120,220),'gold','L2 也失败 → 降至 L3 缓存/模板兜底');
 
   /* L3 */
   if(L3==='ok'){
-    if(Math.random()<.6){hop('nL3','nOut',rnd(180,320),'gold');
+    if(Math.random()<.6){hop('nL3','nOut',rnd(180,320),'gold','命中缓存：相似案例即刻可用（标注生成时间）');
       return fin(segs,T,true,'deg','相似案例（缓存）','缓存兜底 · '+Math.round(T)+'ms')}
-    hop('nL3','nOut',rnd(450,650),'gold');
+    hop('nL3','nOut',rnd(450,650),'gold','模板兜底：结构完整、关键字段留白的诚实半成品');
     return fin(segs,T,true,'deg','模板半成品','模板兜底 · '+Math.round(T)+'ms')}
-  hop('nL3','nL0',rnd(100,180),'bad');
+  hop('nL3','nL0',rnd(100,180),'bad','L3 失效 → 只剩 L0 底线');
 
   /* L0 */
-  if(L0==='ok'){hop('nL0','nOut',rnd(500,800),'bad');
+  if(L0==='ok'){hop('nL0','nOut',rnd(500,800),'bad','✗ 全链失败：人话提示 + P0 上报 + 自动恢复');
     return fin(segs,T,false,'bad','错误页 · 已上报 P0','全链失败 · '+Math.round(T)+'ms')}
-  hop('nL0','nOut',rnd(200,300),'bad');
+  hop('nL0','nOut',rnd(200,300),'bad','连底线都挂了——这就是没有降级链的世界');
   return fin(segs,T,false,'bad','白屏（连底线都挂了）','无兜底 · '+Math.round(T)+'ms');
 
   function fin(s,t,ok,cls,label,lat){return {segs:s,outcome:{ok:ok,cls:cls,label:label,lat:lat,ms:Math.round(t)}}}
@@ -469,9 +537,10 @@ function send(){
     var s=r.segs[i++];
     pulse(s.to,s.cls==='gold');
     if(s.from===s.to){   /* 层内重试：点在节点上打转 */
+      if(s.msg)narrate(s.msg,s.cls);
       hold(s.to,s.dur,next);
     }else{
-      travel(s.from,s.to,s.dur,s.cls,next);
+      travel(s.from,s.to,s.dur,s.cls,next,s.msg);
     }
   })();
 }
