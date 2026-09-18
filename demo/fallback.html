@@ -19,17 +19,30 @@
 .lab{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(280px,1fr);gap:22px;margin-top:44px}
 @media(max-width:1140px){.lab{grid-template-columns:1fr}}
 
-/* ---- 舞台：链路图 ---- */
+/* ---- 舞台：透视桌板（CSS 3D 走合成器管线，本机 GPU 栈安全） ---- */
 .stage{position:relative;background:var(--bg-card);border:1.5px solid var(--line);border-radius:22px;
-  padding:26px 18px;min-height:560px;overflow:hidden}
+  padding:26px 18px 20px;min-height:560px;overflow:hidden;
+  perspective:1250px;perspective-origin:50% 22%;
+  background-image:radial-gradient(120% 90% at 50% 0%,transparent 55%,color-mix(in srgb,var(--bg) 55%,transparent))}
+.deck{position:relative;transform:rotateX(42deg);transform-origin:50% 100%;
+  transform-style:preserve-3d;transition:transform .6s ease}
+.deck::before{content:"";position:absolute;inset:-70px -40px -30px;pointer-events:none;
+  background:
+    repeating-linear-gradient(90deg,color-mix(in srgb,var(--text) 11%,transparent) 0 1px,transparent 1px 56px),
+    repeating-linear-gradient(0deg,color-mix(in srgb,var(--text) 11%,transparent) 0 1px,transparent 1px 56px);
+  border-radius:18px;
+  -webkit-mask-image:radial-gradient(85% 85% at 50% 60%,#000 34%,transparent 100%);
+  mask-image:radial-gradient(85% 85% at 50% 60%,#000 34%,transparent 100%)}
 .stage svg.wires{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
 .wire{stroke:var(--line);stroke-width:2.5;fill:none;transition:stroke .4s}
 .wire.hot{stroke:var(--accent)}
 .wire.fall{stroke:var(--gold);stroke-dasharray:7 6}
 .node{position:relative;z-index:2;width:172px;background:var(--bg);border:2px solid var(--line);
   border-radius:16px;padding:13px 15px;cursor:pointer;user-select:none;
-  transition:border-color .25s,transform .25s cubic-bezier(.34,1.56,.64,1),box-shadow .25s}
-.node:hover{transform:translateY(-3px)}
+  transform:translateZ(16px);
+  box-shadow:0 16px 28px -14px rgba(16,22,48,.45);
+  transition:border-color .25s,transform .3s cubic-bezier(.34,1.56,.64,1),box-shadow .3s}
+.node:hover{transform:translateZ(34px);box-shadow:0 30px 48px -16px rgba(16,22,48,.55)}
 .node b{display:block;font-size:14.5px;font-weight:800;color:var(--text)}
 .node p{font-size:11.5px;line-height:1.65;color:var(--text-dim);margin-top:5px}
 .node .st{display:inline-block;margin-top:8px;font-family:"JetBrains Mono","Noto Sans SC",monospace;
@@ -42,7 +55,7 @@
 .node.slow .st{background:color-mix(in srgb,var(--pink) 16%,transparent);color:var(--pink)}
 .node.down{border-color:hsl(3 80% 55%);animation:nodeShake .5s ease 2}
 .node.down .st{background:color-mix(in srgb,hsl(3 80% 55%) 16%,transparent);color:hsl(3 80% 55%)}
-@keyframes nodeShake{25%{transform:translateX(-3px)}75%{transform:translateX(3px)}}
+@keyframes nodeShake{25%{transform:translate3d(-3px,0,14px)}75%{transform:translate3d(3px,0,14px)}}
 .node.hit{box-shadow:0 0 0 4px color-mix(in srgb,var(--accent) 25%,transparent)}
 .node.goldhit{box-shadow:0 0 0 4px color-mix(in srgb,var(--gold) 30%,transparent)}
 .node.src{cursor:default;border-style:dashed}
@@ -59,18 +72,28 @@
 @media(max-width:760px){
   .lab-grid{grid-template-columns:1fr;grid-template-rows:auto;justify-items:stretch}
   #nSrc,#nL1,#nL2,#nL3,#nL0,#nOut{grid-area:auto;width:100%;max-width:300px;margin:0 auto}
+  .stage{perspective:none}
+  .deck{transform:none}
+  .deck::before{display:none}
+  .node{transform:none}
+  .node:hover{transform:translateY(-3px)}
   .stage svg.wires{display:none}
   .lab-grid .node+.node{margin-top:26px}
   .lab-grid .node+.node::before{content:"↓";display:block;text-align:center;color:var(--gold);
     font-weight:700;font-size:16px;margin:-18px 0 6px}
 }
 
-/* ---- 请求点 ---- */
+/* ---- 请求点（落在桌板上的金币，透视下自然变椭圆） ---- */
 .dot{position:absolute;z-index:3;width:13px;height:13px;border-radius:50%;
   background:var(--accent);box-shadow:0 0 10px var(--accent);margin:-6.5px 0 0 -6.5px;
   pointer-events:none;will-change:transform}
 .dot.gold{background:var(--gold);box-shadow:0 0 10px var(--gold)}
 .dot.bad{background:var(--pink);box-shadow:0 0 10px var(--pink)}
+.trail{position:absolute;z-index:2;width:8px;height:8px;border-radius:50%;margin:-4px 0 0 -4px;
+  background:var(--accent);pointer-events:none;animation:trailFade .55s forwards}
+.trail.gold{background:var(--gold)}
+.trail.bad{background:var(--pink)}
+@keyframes trailFade{to{opacity:0}}
 
 /* ---- 控制台 ---- */
 .console{display:flex;flex-direction:column;gap:18px}
@@ -151,8 +174,9 @@
 
   <div class="lab" data-rv>
     <div class="stage" id="stage">
-      <svg class="wires" id="wires"></svg>
-      <div class="lab-grid">
+      <div class="deck" id="deck">
+        <svg class="wires" id="wires"></svg>
+        <div class="lab-grid">
         <div class="node src" id="nSrc">
           <b>用户请求</b>
           <p>「生成一份行动报告」</p>
@@ -182,6 +206,7 @@
           <b>用户看到</b>
           <p id="outNow">（等待第一个请求）</p>
           <span class="st" id="outTag" style="background:color-mix(in srgb,var(--text) 10%,transparent);color:var(--text-dim)">就绪</span>
+        </div>
         </div>
       </div>
     </div>
@@ -271,7 +296,7 @@ var autoOn=false, chaosOn=false;
 var seq=0, results=[];     /* {ok, degraded, lat} */
 
 var $=function(id){return document.getElementById(id)};
-var stage=$('stage'), wires=$('wires'), feed=$('feed');
+var stage=$('stage'), deck=$('deck'), grid=document.querySelector('.lab-grid'), wires=$('wires'), feed=$('feed');
 
 NODES.forEach(function(n){
   var el=$(n.id);
@@ -297,8 +322,10 @@ var WIRES=[
   {from:'nL0',to:'nOut',cls:'fall',label:'底线'}
 ];
 function center(id){
-  var a=$(id).getBoundingClientRect(), b=stage.getBoundingClientRect();
-  return {x:a.left-b.left+a.width/2, y:a.top-b.top+a.height/2};
+  /* 布局坐标（3D 变换前的本地系）：节点 offset 相对 lab-grid，再加 grid 相对 deck 的偏移 */
+  var el=$(id);
+  return {x:el.offsetLeft+grid.offsetLeft+el.offsetWidth/2,
+          y:el.offsetTop+grid.offsetTop+el.offsetHeight/2};
 }
 function curve(a,b){
   var mx=(a.x+b.x)/2, my=(a.y+b.y)/2;
@@ -318,22 +345,30 @@ function drawWires(){
   });
 }
 
-/* ---- 请求点动画（DOM + rAF 沿贝塞尔） ---- */
+/* ---- 请求点动画（DOM + rAF 沿贝塞尔，落在 3D 桌板上，带拖尾） ---- */
+function trail(x,y,cls){
+  var t=document.createElement('span');
+  t.className='trail'+(cls?' '+cls:'');
+  t.style.transform='translate3d('+x.toFixed(1)+'px,'+y.toFixed(1)+'px,20px)';
+  deck.appendChild(t);
+  setTimeout(function(){t.remove()},580);
+}
 function travel(fromId,toId,dur,cls,onDone){
   var a=center(fromId), b=center(toId);
   var dx=b.x-a.x, dy=b.y-a.y, len=Math.hypot(dx,dy)||1;
   var mx=(a.x+b.x)/2-dy/len*34, my=(a.y+b.y)/2+dx/len*34;
   var d=document.createElement('span');
   d.className='dot'+(cls?' '+cls:'');
-  d.style.transform='translate('+a.x+'px,'+a.y+'px)';
-  stage.appendChild(d);
-  var t0=null;
+  d.style.transform='translate3d('+a.x+'px,'+a.y+'px,20px)';
+  deck.appendChild(d);
+  var t0=null,frame=0;
   function step(ts){
     if(t0===null)t0=ts;
     var p=Math.min((ts-t0)/dur,1), q=1-p;
     var x=q*q*a.x+2*q*p*mx+p*p*b.x;
     var y=q*q*a.y+2*q*p*my+p*p*b.y;
-    d.style.transform='translate('+x.toFixed(1)+'px,'+y.toFixed(1)+'px)';
+    d.style.transform='translate3d('+x.toFixed(1)+'px,'+y.toFixed(1)+'px,20px)';
+    if(++frame%4===0)trail(x,y,cls);
     if(p<1)requestAnimationFrame(step);
     else{d.remove();if(onDone)onDone()}
   }
@@ -415,14 +450,16 @@ function hold(id,dur,cb){
   if(reduce){setTimeout(cb,50);return}
   var c=center(id), d=document.createElement('span');
   d.className='dot gold';
-  d.style.transform='translate('+c.x+'px,'+c.y+'px)';
-  stage.appendChild(d);
-  var t0=null;
+  d.style.transform='translate3d('+c.x+'px,'+c.y+'px,20px)';
+  deck.appendChild(d);
+  var t0=null,frame=0;
   (function spin(ts){
     if(t0===null)t0=ts;
     var p=(ts-t0)/dur;
     var ang=p*Math.PI*2*2.2, R=13;
-    d.style.transform='translate('+(c.x+Math.cos(ang)*R).toFixed(1)+'px,'+(c.y+Math.sin(ang)*R*.6).toFixed(1)+'px)';
+    var x=c.x+Math.cos(ang)*R, y=c.y+Math.sin(ang)*R*.6;
+    d.style.transform='translate3d('+x.toFixed(1)+'px,'+y.toFixed(1)+'px,20px)';
+    if(++frame%5===0)trail(x,y,'gold');
     if(p<1)requestAnimationFrame(spin);
     else{d.remove();cb()}
   })(performance.now());
@@ -431,6 +468,7 @@ function finish(r){
   dotsAlive--;
   results.push(r.outcome);
   if(results.length>200)results.shift();
+  pulse('nOut',r.outcome.cls!=='ok');   /* 结果卡反馈弹跳 */
   /* 用户端卡片 */
   $('outNow').textContent=r.outcome.label;
   $('outTag').textContent=r.outcome.ok?'送达':'失败';
