@@ -36,7 +36,9 @@
 .stage svg.wires{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
 .wire{stroke:var(--line);stroke-width:2.5;fill:none;transition:stroke .4s}
 .wire.hot{stroke:var(--accent)}
-.wire.fall{stroke:var(--gold);stroke-dasharray:7 6}
+.wire.fall{stroke:var(--gold);stroke-dasharray:7 6;animation:dashFlow 1.5s linear infinite}
+@keyframes dashFlow{to{stroke-dashoffset:-26}}
+@media(prefers-reduced-motion:reduce){.wire.fall{animation:none}}
 .node{position:relative;z-index:2;width:172px;background:var(--bg);border:2px solid var(--line);
   border-radius:16px;padding:13px 15px;cursor:pointer;user-select:none;
   transform:translateZ(16px);
@@ -44,9 +46,18 @@
   transition:border-color .25s,transform .3s cubic-bezier(.34,1.56,.64,1),box-shadow .3s}
 .node:hover{transform:translateZ(34px);box-shadow:0 30px 48px -16px rgba(16,22,48,.55)}
 .node b{display:block;font-size:14.5px;font-weight:800;color:var(--text)}
+.node b em{font-style:normal;font-family:"JetBrains Mono",monospace;font-size:11px;
+  color:var(--gold);margin-right:7px;vertical-align:2px}
 .node p{font-size:11.5px;line-height:1.65;color:var(--text-dim);margin-top:5px}
 .node .st{display:inline-block;margin-top:8px;font-family:"JetBrains Mono","Noto Sans SC",monospace;
-  font-size:11px;font-weight:700;padding:3px 9px;border-radius:99px;letter-spacing:.05em}
+  font-size:11px;font-weight:700;padding:3px 9px;border-radius:99px;letter-spacing:.05em;
+  transition:background .3s,color .3s}
+.node .tip{position:absolute;left:50%;top:calc(100% + 10px);transform:translateX(-50%);
+  width:196px;background:var(--bg);border:1.5px solid var(--line);border-radius:10px;
+  padding:10px 12px;font-size:11.5px;line-height:1.75;color:var(--text-dim);
+  opacity:0;pointer-events:none;transition:opacity .25s;z-index:9;cursor:default}
+.node .tip b{font-size:11.5px;color:var(--gold)}
+.node:hover .tip{opacity:1}
 .node.ok{border-color:var(--accent)}
 .node.ok .st{background:color-mix(in srgb,var(--accent) 16%,transparent);color:var(--accent)}
 .node.rate{border-color:var(--gold)}
@@ -83,14 +94,17 @@
     font-weight:700;font-size:16px;margin:-18px 0 6px}
 }
 
-/* ---- 请求点（落在桌板上的金币，透视下自然变椭圆） ---- */
-.dot{position:absolute;z-index:3;width:13px;height:13px;border-radius:50%;
-  background:var(--accent);box-shadow:0 0 10px var(--accent);margin:-6.5px 0 0 -6.5px;
+/* ---- 请求点（落在桌板上的发光体：内核+光晕双层） ---- */
+.dot{position:absolute;z-index:3;width:14px;height:14px;border-radius:50%;margin:-7px 0 0 -7px;
+  background:radial-gradient(circle at 34% 30%,#fff 0 18%,var(--accent) 55%,color-mix(in srgb,var(--accent) 55%,transparent) 100%);
+  box-shadow:0 0 14px var(--accent),0 0 4px color-mix(in srgb,#fff 70%,transparent);
   pointer-events:none;will-change:transform}
-.dot.gold{background:var(--gold);box-shadow:0 0 10px var(--gold)}
-.dot.bad{background:var(--pink);box-shadow:0 0 10px var(--pink)}
+.dot.gold{background:radial-gradient(circle at 34% 30%,#fff 0 18%,var(--gold) 55%,color-mix(in srgb,var(--gold) 55%,transparent) 100%);
+  box-shadow:0 0 14px var(--gold),0 0 4px color-mix(in srgb,#fff 70%,transparent)}
+.dot.bad{background:radial-gradient(circle at 34% 30%,#fff 0 18%,var(--pink) 55%,color-mix(in srgb,var(--pink) 55%,transparent) 100%);
+  box-shadow:0 0 14px var(--pink),0 0 4px color-mix(in srgb,#fff 70%,transparent)}
 .trail{position:absolute;z-index:2;width:8px;height:8px;border-radius:50%;margin:-4px 0 0 -4px;
-  background:var(--accent);pointer-events:none;animation:trailFade .55s forwards}
+  background:var(--accent);pointer-events:none;animation:trailFade .62s forwards}
 .trail.gold{background:var(--gold)}
 .trail.bad{background:var(--pink)}
 @keyframes trailFade{to{opacity:0}}
@@ -183,24 +197,28 @@
           <span class="st" style="background:color-mix(in srgb,var(--text) 10%,transparent);color:var(--text-dim)">入口</span>
         </div>
         <div class="node ok" id="nL1" role="button" tabindex="0" title="点击切换故障类型">
-          <b>L1 · 主模型</b>
+          <b><em>L1</em>主模型</b>
           <p>结构化输出 + 分层重试。限流退避、格式错误重问、过滤拒绝不重试。</p>
           <span class="st">正常</span>
+          <div class="tip"><b>分层重试</b>：限流类退避重试、格式错误带错误信息重问、内容过滤拒绝<b>直接降级</b>——重试解决不了价值观拒绝。</div>
         </div>
         <div class="node ok" id="nL2" role="button" tabindex="0" title="点击切换故障类型">
-          <b>L2 · 备选模型</b>
+          <b><em>L2</em>备选模型</b>
           <p>同 schema 换引擎。下游无感，只是慢一点。</p>
           <span class="st">正常</span>
+          <div class="tip"><b>下游无感</b>：输出 schema 必须与主层完全一致。换模型要换解析逻辑，那不是降级，是第二套系统。</div>
         </div>
         <div class="node ok" id="nL3" role="button" tabindex="0" title="点击切换故障类型">
-          <b>L3 · 缓存 / 模板</b>
+          <b><em>L3</em>缓存 / 模板</b>
           <p>相似案例直接引用并标注生成时间；模板兜底给诚实的半成品。</p>
           <span class="st">正常</span>
+          <div class="tip"><b>诚实的半成品</b>：缓存引用标注生成时间、模板留白让用户填关键项——好过幻觉的完整报告。</div>
         </div>
         <div class="node ok" id="nL0" role="button" tabindex="0" title="点击切换故障类型">
-          <b>L0 · 错误页底线</b>
+          <b><em>L0</em>错误页底线</b>
           <p>人话提示 + P0 上报 + 自动恢复。系统最后的体面。</p>
           <span class="st">正常</span>
+          <div class="tip"><b>最后的体面</b>：来自一次真实事故——浏览器自动翻译插件改坏 DOM 致整页崩溃，修复后成为所有页面的标配。</div>
         </div>
         <div class="node out" id="nOut">
           <b>用户看到</b>
@@ -212,6 +230,17 @@
     </div>
 
     <aside class="console">
+      <div class="panel">
+        <h4>场景剧本 · 一键演示</h4>
+        <div class="ctrl-row">
+          <button class="btn-lab" data-scene="calm">正常时段</button>
+          <button class="btn-lab" data-scene="degrade">主模型限流</button>
+          <button class="btn-lab warn" data-scene="storm">重试风暴</button>
+          <button class="btn-lab warn" data-scene="crash">全链崩溃</button>
+        </div>
+        <p class="hint">选一个剧本，故障已替你布好，看请求怎么活下来。</p>
+      </div>
+
       <div class="panel">
         <h4>控制台</h4>
         <div class="ctrl-row">
@@ -469,8 +498,8 @@ function finish(r){
   results.push(r.outcome);
   if(results.length>200)results.shift();
   pulse('nOut',r.outcome.cls!=='ok');   /* 结果卡反馈弹跳 */
-  /* 用户端卡片 */
-  $('outNow').textContent=r.outcome.label;
+  /* 用户端卡片（结果 + 延迟双行） */
+  $('outNow').innerHTML=r.outcome.label+'<i style="display:block;font-style:normal;font-family:JetBrains Mono,monospace;font-size:10.5px;color:var(--text-dim);margin-top:3px">'+(r.outcome.ms/1000).toFixed(1)+'s</i>';
   $('outTag').textContent=r.outcome.ok?'送达':'失败';
   $('outTag').style.cssText=r.outcome.cls==='bad'
     ?'background:color-mix(in srgb,var(--pink) 16%,transparent);color:var(--pink)'
@@ -485,20 +514,56 @@ function finish(r){
   while(feed.children.length>30)feed.lastChild.remove();
   updateStats();
 }
+/* ---- 场景剧本：一键布故障 + 连发观察 ---- */
+var SCENES={
+  calm:  {states:['ok','ok','ok','ok'],retry:'layered'},
+  degrade:{states:['rate','ok','ok','ok'],retry:'layered'},
+  storm: {states:['rate','ok','ok','ok'],retry:'infinite'},
+  crash: {states:['down','down','down','ok'],retry:'layered'}
+};
+[].forEach.call(document.querySelectorAll('[data-scene]'),function(btn){
+  btn.addEventListener('click',function(){
+    var sc=SCENES[btn.getAttribute('data-scene')];
+    NODES.forEach(function(n,i){
+      n.state=sc.states[i];
+      var el=$(n.id);
+      el.className='node '+n.state;
+      el.querySelector('.st').textContent=ST_LABEL[n.state];
+    });
+    if(retryMode!==sc.retry)$('retryMode').click();
+    if(!autoOn)$('autoBtn').click();
+    drawWires();
+    send();
+  });
+});
+
+/* ---- 统计数字缓动（跳变太粗暴） ---- */
+function tween(el,to,suffix){
+  var from=parseFloat(el.dataset.v||to)||0;
+  el.dataset.v=to;
+  var t0=null,DUR=340;
+  function tk(ts){
+    if(t0===null)t0=ts;
+    var p=Math.min((ts-t0)/DUR,1),e=1-Math.pow(1-p,3);
+    el.textContent=(from+(to-from)*e).toFixed(to%1?1:0)+suffix;
+    if(p<1)requestAnimationFrame(tk);
+  }
+  if(reduce){el.textContent=to+suffix;return}
+  requestAnimationFrame(tk);
+}
 function updateStats(){
   var n=results.length;
   if(!n){$('stSucc').textContent='–';$('stDegr').textContent='–';$('stP50').textContent='–';return}
   var ok=results.filter(function(r){return r.ok}).length;
   var deg=results.filter(function(r){return r.ok&&r.cls==='deg'}).length;
   var lats=results.map(function(r){return r.ms}).sort(function(a,b){return a-b});
-  var p50=lats[Math.floor(n/2)];
-  $('stSucc').textContent=Math.round(ok/n*100)+'%';
-  $('stDegr').textContent=(ok?Math.round(deg/ok*100):0)+'%';
-  $('stP50').textContent=(p50/1000).toFixed(1)+'s';
+  tween($('stSucc'),Math.round(ok/n*100),'%');
+  tween($('stDegr'),ok?Math.round(deg/ok*100):0,'%');
+  tween($('stP50'),+(lats[Math.floor(n/2)]/1000).toFixed(1),'s');
   var succPct=Math.round(ok/n*100);
   $('statNote').textContent = succPct===100 && deg/ok>.4
     ? '降级率不低但成功率满格——这就是降级链的意义：坏零件，好系统。'
-    : '成功率 '+succPct+'%。试试把 L1 和 L2 同时掐断，看缓存能不能扛住。';
+    : '成功率 '+succPct+'%。试试「主模型限流」或「重试风暴」，看观测面板怎么变。';
 }
 
 /* ---- 控制台 ---- */
