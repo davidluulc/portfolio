@@ -77,7 +77,7 @@
 .node.out{cursor:default}
 .lab-grid{position:relative;z-index:1;display:grid;
   grid-template-columns:172px 1fr 190px;grid-template-rows:repeat(4,auto);
-  gap:20px 14px;align-items:start;justify-items:center}
+  gap:36px 14px;align-items:start;justify-items:center}
 #nSrc{grid-area:1/1/5/2;align-self:center}
 #nL1{grid-area:1/2}
 #nL2{grid-area:2/2}
@@ -230,25 +230,25 @@
           <p>「生成一份行动报告」</p>
           <span class="st" style="background:color-mix(in srgb,var(--text) 10%,transparent);color:var(--text-dim)">入口</span>
         </div>
-        <div class="node ok" id="nL1" role="button" tabindex="0" title="点击切换故障类型">
+        <div class="node ok" id="nL1" role="button" tabindex="0" aria-label="L1 主模型，点击切换故障类型">
           <b><em>L1</em>主模型</b>
           <p>结构化输出 + 分层重试。限流退避、格式错误重问、过滤拒绝不重试。</p>
           <span class="st">正常</span>
           <div class="tip"><b>分层重试</b>：限流类退避重试、格式错误带错误信息重问、内容过滤拒绝<b>直接降级</b>——重试解决不了价值观拒绝。</div>
         </div>
-        <div class="node ok" id="nL2" role="button" tabindex="0" title="点击切换故障类型">
+        <div class="node ok" id="nL2" role="button" tabindex="0" aria-label="L2 备选模型，点击切换故障类型">
           <b><em>L2</em>备选模型</b>
           <p>同 schema 换引擎。下游无感，只是慢一点。</p>
           <span class="st">正常</span>
           <div class="tip"><b>下游无感</b>：输出 schema 必须与主层完全一致。换模型要换解析逻辑，那不是降级，是第二套系统。</div>
         </div>
-        <div class="node ok" id="nL3" role="button" tabindex="0" title="点击切换故障类型">
+        <div class="node ok" id="nL3" role="button" tabindex="0" aria-label="L3 缓存模板，点击切换故障类型">
           <b><em>L3</em>缓存 / 模板</b>
           <p>相似案例直接引用并标注生成时间；模板兜底给诚实的半成品。</p>
           <span class="st">正常</span>
           <div class="tip"><b>诚实的半成品</b>：缓存引用标注生成时间、模板留白让用户填关键项——好过幻觉的完整报告。</div>
         </div>
-        <div class="node ok" id="nL0" role="button" tabindex="0" title="点击切换故障类型">
+        <div class="node ok" id="nL0" role="button" tabindex="0" aria-label="L0 错误页底线，点击切换故障类型">
           <b><em>L0</em>错误页底线</b>
           <p>人话提示 + P0 上报 + 自动恢复。系统最后的体面。</p>
           <span class="st">正常</span>
@@ -398,14 +398,47 @@ function curve(a,b){
   var cx=mx-dy/len*34, cy=my+dx/len*34;   /* 垂直偏移的控制点 */
   return 'M '+a.x.toFixed(1)+' '+a.y.toFixed(1)+' Q '+cx.toFixed(1)+' '+cy.toFixed(1)+' '+b.x.toFixed(1)+' '+b.y.toFixed(1);
 }
+/* ---- 布线：边缘到边缘（中段不再被卡片盖住） ----
+   主干（L1→L2→L3→L0）= 上卡底边中点 → 下卡顶边中点的垂直直线；
+   进出（入口→L1、各层→出口）= 右缘出、左缘入的侧向曲线。 */
+function edgeAnchor(id,side){
+  var el=$(id);
+  var x=el.offsetLeft+grid.offsetLeft,y=el.offsetTop+grid.offsetTop;
+  if(side==='right')return{x:x+el.offsetWidth,y:y+el.offsetHeight/2};
+  if(side==='left')return{x:x,y:y+el.offsetHeight/2};
+  if(side==='top')return{x:x+el.offsetWidth/2,y:y};
+  return{x:x+el.offsetWidth/2,y:y+el.offsetHeight};
+}
+var MID_IDS=['nL1','nL2','nL3','nL0'];
+function wirePath(w){
+  var a,b;
+  if(MID_IDS.indexOf(w.from)>=0&&MID_IDS.indexOf(w.to)>=0){
+    a=edgeAnchor(w.from,'bottom');b=edgeAnchor(w.to,'top');
+    return 'M '+a.x.toFixed(1)+' '+a.y.toFixed(1)+' L '+b.x.toFixed(1)+' '+b.y.toFixed(1);
+  }
+  a=edgeAnchor(w.from,'right');
+  b=edgeAnchor(w.to,'left');
+  return curve(a,b);
+}
 function drawWires(){
   if(innerWidth<=760){wires.innerHTML='';WIRES.forEach(function(w){w.el=null});return}
   var svgNs='http://www.w3.org/2000/svg';
   [].slice.call(wires.children).forEach(function(c){c.remove()});
+  /* 方向箭头（按基础色两枚，主题色实时取值） */
+  var defs=document.createElementNS(svgNs,'defs');
+  var css=getComputedStyle(document.documentElement);
+  var cGray=css.getPropertyValue('--line').trim()||'#888';
+  var cGold=css.getPropertyValue('--gold').trim()||'#c90';
+  defs.innerHTML=
+    '<marker id="mGray" markerWidth="8" markerHeight="8" refX="6.5" refY="3.5" orient="auto"><path d="M0 0 L7 3.5 L0 7 Z" fill="'+cGray+'"/></marker>'+
+    '<marker id="mGold" markerWidth="8" markerHeight="8" refX="6.5" refY="3.5" orient="auto"><path d="M0 0 L7 3.5 L0 7 Z" fill="'+cGold+'"/></marker>';
+  wires.appendChild(defs);
   WIRES.forEach(function(w){
     var p=document.createElementNS(svgNs,'path');
-    p.setAttribute('d',curve(center(w.from),center(w.to)));
-    p.setAttribute('class','wire '+(w.cls==='fall'?'fall':''));
+    p.setAttribute('d',wirePath(w));
+    var gold=w.cls==='fall';
+    p.setAttribute('class','wire '+(gold?'fall':''));
+    p.setAttribute('marker-end','url(#'+(gold?'mGold':'mGray')+')');
     wires.appendChild(p);
     w.el=p;
   });
@@ -432,15 +465,21 @@ function narrate(text,cls){
   n.className='narr'+(cls?' '+cls:'');
 }
 function travel(fromId,toId,dur,cls,onDone,msg){
-  var a=center(fromId), b=center(toId);
-  var dx=b.x-a.x, dy=b.y-a.y, len=Math.hypot(dx,dy)||1;
-  var mx=(a.x+b.x)/2-dy/len*34, my=(a.y+b.y)/2+dx/len*34;
+  var w=fromId===toId?null:wireBetween(fromId,toId);
+  var pathEl=w&&w.el;
+  var LEN=0;
+  try{LEN=pathEl?pathEl.getTotalLength():0}catch(e){pathEl=null}
+  var start;
+  if(pathEl){var p0=pathEl.getPointAtLength(0);start={x:p0.x,y:p0.y}}
+  else{
+    var a=center(fromId),b=center(toId);
+    start={x:a.x,y:a.y};
+  }
   var d=document.createElement('span');
   d.className='dot'+(cls?' '+cls:'');
-  d.style.transform='translate3d('+a.x+'px,'+a.y+'px,20px)';
+  d.style.transform='translate3d('+start.x+'px,'+start.y+'px,20px)';
   deck.appendChild(d);
   /* 路径高亮：请求走哪条线，哪条线亮 */
-  var w=fromId===toId?null:wireBetween(fromId,toId);
   if(w){
     w.classList.add('lit');
     if(cls==='gold')w.classList.add('goldline');
@@ -450,9 +489,18 @@ function travel(fromId,toId,dur,cls,onDone,msg){
   var t0=null,frame=0;
   function step(ts){
     if(t0===null)t0=ts;
-    var p=Math.min((ts-t0)/dur,1), q=1-p;
-    var x=q*q*a.x+2*q*p*mx+p*p*b.x;
-    var y=q*q*a.y+2*q*p*my+p*p*b.y;
+    var p=Math.min((ts-t0)/dur,1),x,y;
+    if(pathEl){
+      var pt=pathEl.getPointAtLength(LEN*p);
+      x=pt.x;y=pt.y;
+    }else{
+      var a2=center(fromId),b2=center(toId);
+      var dx=b2.x-a2.x,dy=b2.y-a2.y,len=Math.hypot(dx,dy)||1;
+      var mx=(a2.x+b2.x)/2-dy/len*34,my=(a2.y+b2.y)/2+dx/len*34;
+      var q=1-p;
+      x=q*q*a2.x+2*q*p*mx+p*p*b2.x;
+      y=q*q*a2.y+2*q*p*my+p*p*b2.y;
+    }
     d.style.transform='translate3d('+x.toFixed(1)+'px,'+y.toFixed(1)+'px,20px)';
     if(++frame%4===0)trail(x,y,cls);
     if(p<1)requestAnimationFrame(step);
