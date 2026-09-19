@@ -58,7 +58,7 @@ body{background:linear-gradient(180deg,var(--sky-top) 0%,var(--sky-mid) 32vh,var
   transition:background .6s ease,color .6s ease;overflow-x:hidden}
 .wrap{max-width:840px;margin:0 auto;padding:0 26px;position:relative;z-index:2;
   pointer-events:none}
-.wrap :is(p,h1,h2,h3,a,button,span,i,.stat,.tag,.proj,.contact-card,.hi,.sec-head,.art-row){pointer-events:auto}
+.wrap :is(p,h1,h2,h3,a,button,span,i,.tag,.proj-h,.contact-card,.hi,.sec-head,.art-row){pointer-events:auto}
 .mono{font-family:"JetBrains Mono","Noto Sans SC",monospace}
 
 /* ============ 首屏风景（云海） ============ */
@@ -137,7 +137,6 @@ nav.links a:hover::after{transform:scaleX(1)}
 .hero .role{margin-top:22px;font-size:clamp(15px,2vw,19px);font-weight:600;color:var(--text)}
 .hero .role i{font-style:normal;color:var(--accent)}
 .intro{padding:45vh 0 0}.intro .stage{height:58vh}
-.intro .motto{margin-top:20px;font-size:15.5px;font-weight:700;letter-spacing:.18em;color:var(--gold)}
 .intro .who{margin:30px 0 12px;font-size:19.5px;font-weight:500;color:var(--text)}
 .intro .lede{font-size:17.5px;line-height:2;color:var(--text-dim);max-width:36em}
 .intro .lede b{color:var(--text);font-weight:700}
@@ -153,14 +152,6 @@ nav.links a:hover::after{transform:scaleX(1)}
 .btn.ghost:hover{box-shadow:0 8px 0 var(--line)}
 .btn.ghost:active{box-shadow:0 1px 0 var(--line)}
 
-/* ============ 数字徽章 ============ */
-.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin:52px 0 0}
-.stat{background:var(--bg-card);border:1.5px solid var(--line);border-radius:16px;padding:18px 18px 16px;
-  transition:transform .3s cubic-bezier(.34,1.56,.64,1),border-color .3s}
-.stat:hover{transform:translateY(-5px) rotate(-.6deg);border-color:var(--accent)}
-.stat .v{font-family:"JetBrains Mono",monospace;font-weight:700;font-size:22px}
-.stat .v i{font-style:normal;color:var(--accent)}
-.stat .k{font-size:12px;color:var(--text-dim);margin-top:6px}
 
 /* ============ 章节 ============ */
 .sec{margin-top:100px}
@@ -171,16 +162,6 @@ nav.links a:hover::after{transform:scaleX(1)}
 .tag{display:inline-block;font-family:"JetBrains Mono",monospace;font-size:11.5px;letter-spacing:.05em;
   color:var(--text-dim);border:1px solid var(--line);border-radius:1000px;padding:5px 13px;margin-bottom:14px}
 
-/* ============ 项目卡 ============ */
-.proj{display:block;text-decoration:none;color:inherit;background:var(--bg-card);
-  border:1.5px solid var(--line);border-radius:20px;padding:28px 30px;margin-bottom:18px;position:relative;
-  transition:transform .35s cubic-bezier(.34,1.56,.64,1),border-color .3s,box-shadow .35s}
-.proj:hover{transform:translateY(-6px);border-color:var(--accent);box-shadow:0 18px 40px -18px rgba(60,90,220,.35)}
-.proj h3{font-size:21px;font-weight:700}
-.proj p{font-size:14.5px;line-height:2;color:var(--text-dim);margin-top:10px;max-width:40em}
-.proj .go{display:inline-block;margin-top:16px;font-size:14px;font-weight:700;color:var(--accent)}
-.proj .arrow{display:inline-block;transition:transform .3s cubic-bezier(.34,1.56,.64,1)}
-.proj:hover .arrow{transform:translateX(6px)}
 
 /* ============ 文章 ============ */
 .art-row{display:flex;align-items:baseline;gap:16px;padding:20px 4px;text-decoration:none;color:inherit;
@@ -195,14 +176,76 @@ nav.links a:hover::after{transform:scaleX(1)}
   background:var(--bg-card);border:1.5px solid var(--line)}
 .contact-card h2{font-size:clamp(26px,4vw,36px);font-weight:800}
 .contact-card p{color:var(--text-dim);font-size:15.5px;line-height:2;margin-top:14px}
-.contact-card .mail-btn{margin-top:28px}
 footer.foot{padding:0 0 46px;text-align:center;position:relative;z-index:2;
   font-family:"JetBrains Mono",monospace;font-size:12.5px;color:var(--text-dim)}
 footer.foot a{color:var(--accent);text-decoration:none}
 
 @media(max-width:760px){
   nav.links{display:none}
-  .stats{grid-template-columns:1fr 1fr}
   .hero{padding-top:66px}
 }
 @media(prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+
+/* ============ v5 首页交互（用户组件清单：逐词弹簧/横滚×卡内视差/巨字错速） ============ */
+/* 逐词弹簧：长文每词一枚 span，入视口逐词弹入 */
+.js-rv [data-spring]{visibility:hidden}
+.js-rv [data-spring].on{visibility:visible}
+[data-spring] .w{display:inline-block;opacity:0;transform:translateY(0.7em)}
+[data-spring].on .w{animation:wordSpring .48s cubic-bezier(.34,1.56,.64,1) forwards;animation-delay:var(--wd)}
+@keyframes wordSpring{to{opacity:1;transform:none}}
+/* 金色主题词：大弹跳 + 落定微光 */
+[data-spring] .w.gb{color:var(--gold);font-weight:700}
+[data-spring] .w.gb{animation-name:wordSpringBig;animation-duration:.62s;
+  animation-timing-function:cubic-bezier(.3,1.9,.5,1)}
+@keyframes wordSpringBig{
+  from{opacity:0;transform:translateY(1.35em) scale(1.16)}
+  60%{text-shadow:0 2px 22px color-mix(in srgb,var(--gold) 60%,transparent)}
+  to{opacity:1;transform:none;text-shadow:0 2px 18px color-mix(in srgb,var(--gold) 35%,transparent)}}
+.aboutlong{margin-top:54px;max-width:38em}
+.aboutlong p{font-size:16.5px;line-height:2.35;color:var(--text-dim);margin-bottom:30px}
+.aboutlong b{color:var(--text);font-weight:700}
+.aboutlong b.g,.aboutlong .w.gb{color:var(--gold)}
+/* 横滚 × 卡内视差：纵向滚动驱动卡排横移 */
+.hscroll{min-height:100vh;position:relative}
+.hs-sticky{pointer-events:none;position:sticky;top:0;height:100vh;display:flex;flex-direction:column;justify-content:center;
+  padding:0 0 0 max(26px,calc((100vw - 840px)/2));overflow:hidden}
+.hs-giant{pointer-events:none;position:absolute;left:26px;top:9vh;font-size:clamp(120px,17vw,230px);font-weight:900;
+  color:color-mix(in srgb,var(--text) 10%,transparent);letter-spacing:.06em;user-select:none;
+  will-change:transform}
+.hs-track{display:flex;gap:26px;will-change:transform;margin-top:26px}
+.proj-h{pointer-events:auto;position:relative;flex:none;width:min(66vw,560px);text-decoration:none;color:inherit;
+  background:var(--bg-card);border:1.5px solid var(--line);border-radius:22px;overflow:hidden;
+  padding:30px 32px;display:block;will-change:transform;
+  transform:perspective(1300px) rotateY(7deg);opacity:.5;
+  transition:transform .1s linear,opacity .18s ease,border-color .3s}
+.proj-h.center{transform:perspective(1300px) rotateY(0deg) translateY(-4px);opacity:1;border-color:var(--accent)}
+.proj-h:hover{border-color:var(--accent)}
+.ph-bg{position:absolute;left:8px;top:-14px;font-size:120px;font-weight:900;line-height:1;
+  color:color-mix(in srgb,var(--gold) 12%,transparent);pointer-events:none;will-change:transform;user-select:none}
+.ph-in{position:relative;display:flex;flex-direction:column;gap:12px}
+.proj-h .tag{align-self:flex-start;font-family:"JetBrains Mono",monospace;font-size:11.5px;
+  color:var(--gold);border:1.5px solid color-mix(in srgb,var(--gold) 45%,transparent);
+  border-radius:99px;padding:3px 11px}
+.proj-h h3{font-size:21px;font-weight:800;color:var(--text)}
+.proj-h p{font-size:14px;line-height:2;color:var(--text-dim)}
+.proj-h .go{font-size:13.5px;font-weight:700;color:var(--accent)}
+@media(max-width:760px){.proj-h{width:80vw}}
+/* 巨型背景字错速（文章） */
+.w-giant{position:absolute;right:-3vw;top:-46px;font-size:clamp(110px,15vw,200px);font-weight:900;
+  color:color-mix(in srgb,var(--text) 9%,transparent);pointer-events:none;user-select:none;will-change:transform}
+/* 咕嘎导航栏行走面 */
+.gua-rail{position:absolute;left:0;top:24px;width:100%;height:80px;pointer-events:none;display:block}
+/* 联络双入口 */
+.c-links{display:flex;gap:14px;flex-wrap:wrap;margin-top:24px;justify-content:center}
+.c-chip{display:inline-flex;align-items:center;gap:10px;text-decoration:none;cursor:pointer;
+  background:var(--bg-card);border:1.5px solid var(--line);border-radius:14px;padding:13px 18px;
+  font-family:inherit;color:var(--text);
+  transition:transform .25s cubic-bezier(.34,1.56,.64,1),border-color .25s}
+.c-chip:hover{transform:translateY(-4px);border-color:var(--accent)}
+.c-chip svg{width:19px;height:19px;fill:var(--accent)}
+.c-chip span{font-size:12px;color:var(--text-dim);letter-spacing:.04em}
+.c-chip b{font-family:"JetBrains Mono",monospace;font-size:13.5px;font-weight:700}
+@media(prefers-reduced-motion:reduce){
+  .hs-track{display:block}
+  .proj-h{margin:0 0 20px;transform:none!important;opacity:1}
+}

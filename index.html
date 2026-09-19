@@ -62,6 +62,9 @@
       </span>
     </button>
   </div>
+  <svg class="gua-rail" viewBox="0 0 1440 80" preserveAspectRatio="none" aria-hidden="true">
+    <path d="M -120 80 L 1560 80"/>
+  </svg>
 </header>
 
 <main id="main">
@@ -70,54 +73,75 @@
   <div class="intro" id="about">
     <div class="stage">
     <h1 data-scramble>你好，我是<span class="hl">孔维邦</span></h1>
-    <p class="motto" data-scramble="350">时间站在我这边</p>
   </div>
     <p class="who">一个憧憬未来的开发者。</p>
-    <p class="lede">2027 届，在深圳做 AI 应用开发。2026.07–09 独立负责一个反诈骗 AI 援助平台的生产可靠性：<b>降级链、评测、可观测与安全</b>。把生产系统当作品来养——先想清楚，再动手，一个问题追到底。</p>
+    <p class="lede">2027 届，在深圳做 AI 应用开发。2026.07–09 独立负责一个反诈骗 AI 援助平台的生产可靠性：<b>降级链、评测、可观测与安全</b>。</p>
     <div class="cta">
       <a class="btn" href="#projects">看看我做过的</a>
       <a class="btn ghost" href="#contact">联系我</a>
     </div>
-    <div class="stats">
-      <div class="stat"><div class="v">两年</div><div class="k">从第一行代码到独立负责生产系统</div></div>
-      <div class="stat"><div class="v">四代</div><div class="k">为一个雪花噪点迭代到 GPU 渲染栈根因</div></div>
-      <div class="stat"><div class="v">亲手</div><div class="k">这个站的云、咕嘎与实验室，每行都自己写</div></div>
+
+    <div class="aboutlong" id="aboutLong">
+      <p data-spring><b class="g">两年前写下第一行代码，纯属好奇。</b>之前学的网络，研究网线怎么通；撞见 LLM 应用，研究机器怎么想——<b class="g">这个有意思多了</b>。RAG、Agent、评测，一路自学过来，边学边造。</p>
+      <p data-spring>去年夏天在深圳实习，独立负责一个反诈骗援助平台的生产可靠性。办法很朴素：<b class="g">把每个问题立案、编号，修完一个关一个</b>。两个月，29 个合并 PR，系统重新值得信任。</p>
     </div>
   </div>
 
-  <div class="sec" id="projects">
-    <div class="sec-head"><span class="dash"></span><h2>项目</h2></div>
-    <a class="proj" href="projects/shieldassist.html">
-      <span class="tag">实习 · 2026.07–09</span>
-      <h3>反诈骗 AI 援助平台 · 生产可靠性</h3>
-      <p>接手停摆的外包系统。精度根因诊断、可靠性专项治理、两次线上事故闭环、全量安全审计推动多项高危修复、客服会话与异步文书全栈交付。</p>
-      <span class="go">读完整项目 <span class="arrow">→</span></span>
-    </a>
-    <a class="proj" href="projects/ai-interview.html">
-      <span class="tag">个人项目 · LIVE</span>
-      <h3>AI 模拟面试训练系统</h3>
-      <p>六环闭环练习场：RAG 出题、Agent 追问、逐题复盘。pgvector 混合检索，按 hit@3 / MRR 选定 RRF，公网可演示。</p>
-      <span class="go">读完整项目 <span class="arrow">→</span></span>
-    </a>
-    <a class="proj" href="projects/eval-set.html">
-      <span class="tag">阶段完成</span>
-      <h3>生产报告评测集</h3>
-      <p>给 90 份生产报告定验收标准，让「AI 写得好不好」变成能查的事。方法论沉淀为文章《评测先行》。</p>
-      <span class="go">读完整项目 <span class="arrow">→</span></span>
-    </a>
+  <div class="hscroll" id="projects">
+    <div class="hs-sticky">
+      <div class="hs-giant" aria-hidden="true">项目</div>
+      <div class="hs-track" id="hsTrack">
+      <a class="proj-h" href="projects/shieldassist.html">
+        <span class="ph-bg" aria-hidden="true">反诈</span>
+        <span class="ph-in">
+          <span class="tag">实习 · 2026.07–09</span>
+          <h3>反诈骗 AI 援助平台 · 生产可靠性</h3>
+          <p>接手停摆的外包系统。精度根因诊断、可靠性专项治理、两次线上事故闭环、全量安全审计推动多项高危修复、客服会话与异步文书全栈交付。</p>
+          <span class="go">读完整项目 →</span>
+        </span>
+      </a>
+      <a class="proj-h" href="projects/ai-interview.html">
+        <span class="ph-bg" aria-hidden="true">AI</span>
+        <span class="ph-in">
+          <span class="tag">个人项目 · LIVE</span>
+          <h3>AI 模拟面试训练系统</h3>
+          <p>六环闭环练习场：RAG 出题、Agent 追问、逐题复盘。pgvector 混合检索，按 hit@3 / MRR 选定 RRF，公网可演示。</p>
+          <span class="go">读完整项目 →</span>
+        </span>
+      </a>
+      <a class="proj-h" href="projects/eval-set.html">
+        <span class="ph-bg" aria-hidden="true">生产</span>
+        <span class="ph-in">
+          <span class="tag">阶段完成</span>
+          <h3>生产报告评测集</h3>
+          <p>给 90 份生产报告定验收标准，让「AI 写得好不好」变成能查的事。方法论沉淀为文章《评测先行》。</p>
+          <span class="go">读完整项目 →</span>
+        </span>
+      </a>
+      </div>
+    </div>
   </div>
 
-  <div class="sec" id="writing">
-    <div class="sec-head"><span class="dash"></span><h2>文章</h2></div>
+  <div class="sec" id="writing" style="position:relative">
+    <div class="w-giant" aria-hidden="true">文章</div>
     <a class="art-row" href="articles/eval-first.html"><span class="at" data-scramble>评测先行：为什么我先给 AI 建了考场，再谈优化</span><span class="ad">2026.09</span></a>
     <a class="art-row" href="articles/fallback-chain.html"><span class="at" data-scramble="140">降级链：AI 应用活在生产环境的底线</span><span class="ad">2026.09</span></a>
     <a class="art-row" href="articles/ai-division.html"><span class="at" data-scramble="280">哪些归 AI，哪些归我</span><span class="ad">2026.09</span></a>
   </div>
 
   <div class="contact-card" id="contact">
-    <h2>聊一聊？</h2>
-    <p>在找 AI 应用开发的岗位，2027 届校招或正式岗都行。<br>Agent 工程化、降级链设计、评测体系，随时欢迎来聊。</p>
-    <button class="btn mail-btn" id="mailBtn">d77013643@gmail.com</button>
+    <h2>来聊聊</h2>
+    <p>独立开发者，全栈，AI 应用方向 · 2027 届 · 深圳。</p>
+    <div class="c-links">
+      <a class="c-chip" href="https://github.com/davidluulc" target="_blank" rel="noopener">
+        <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg>
+        <span>GitHub</span><b>davidluulc</b>
+      </a>
+      <button class="c-chip" id="mailBtn" data-mail="d77013643@gmail.com">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 5h18a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1Zm1.6 2 7.4 5.6L19.4 7H4.6ZM20 8.9l-7.1 5.4a1.5 1.5 0 0 1-1.8 0L4 8.9V17h16V8.9Z"/></svg>
+        <span>邮箱</span><b>d77013643@gmail.com</b>
+      </button>
+    </div>
   </div>
 
 </div>
@@ -127,9 +151,122 @@
 
 <script src="assets/js/site.js"></script>
 <script src="assets/js/gua.js"></script>
+<script src="assets/js/vendor/gsap.min.js"></script>
+<script src="assets/js/vendor/ScrollTrigger.min.js"></script>
+<script>
+(function(){
+"use strict";
+var reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+/* ① 逐词弹簧：段落拆词 + 入视口触发（scroll 同步驱动，本机可靠路径） */
+document.querySelectorAll('[data-spring]').forEach(function(p){
+  /* 先快照再替换：遍历中 replaceChild 当前节点会打断 TreeWalker 路径 */
+  var texts=[],walk=document.createTreeWalker(p,NodeFilter.SHOW_TEXT),tn;
+  while((tn=walk.nextNode()))texts.push(tn);
+  var spans=[];
+  texts.forEach(function(tn){
+    var inG=tn.parentNode&&tn.parentNode.classList&&tn.parentNode.classList.contains('g');
+    var frag=document.createDocumentFragment();
+    tn.nodeValue.split(/([一-鿿]|[A-Za-z0-9.%\u2013-]+|\s+)/).forEach(function(t){
+      if(!t)return;
+      if(/^\s+$/.test(t)){frag.appendChild(document.createTextNode(t));return}
+      var sp=document.createElement('span');sp.className='w'+(inG?' gb':'');
+      sp.textContent=t;frag.appendChild(sp);spans.push(sp);
+    });
+    tn.parentNode.replaceChild(frag,tn);
+  });
+  var acc=0;
+  spans.forEach(function(sp){
+    acc+=16;
+    var t=sp.textContent;
+    if(/[，、；]/.test(t))acc+=100;
+    else if(/[。！？]/.test(t))acc+=220;
+    sp.style.setProperty('--wd',acc+'ms');
+  });
+  p.__spans=spans;
+});
+var pending=[].slice.call(document.querySelectorAll('[data-spring]'));
+function chkSpring(){
+  pending=pending.filter(function(p){
+    var r=p.getBoundingClientRect();
+    if(r.top<innerHeight*.86){p.classList.add('on');return false}
+    return true;
+  });
+}
+/* ② 横滚：GSAP ScrollTrigger pin+scrub；锚点=递进上台（段 i 末=卡 i 左缘对齐 60px，末卡居中） */
+var hs=document.getElementById('projects'),track=document.getElementById('hsTrack'),
+    giant=document.querySelector('.hs-giant'),wg=document.querySelector('.w-giant');
+function measureHS(){
+  /* 视口绝对坐标；curX 补偿当前横移量，锚点永远基于静止布局位置——
+     offsetLeft 相对中间 wrap 会漏掉居中偏移（实测差 319px） */
+  var cards=[].slice.call(track.children);
+  var cx=innerWidth/2,pad=60;
+  var curX=(window.gsap?gsap.getProperty(track,'x'):0)||0;
+  var anchors=[{p:0,x:0}];
+  cards.forEach(function(c,i){
+    var r=c.getBoundingClientRect();
+    var left=r.left-curX;
+    if(i<cards.length-1){anchors.push({p:(i+1)/cards.length,x:pad-left})}
+    else{anchors.push({p:1,x:cx-(left+r.width/2)})}
+  });
+  return anchors;
+}
+if(hs&&window.gsap&&window.ScrollTrigger&&!reduce){
+  gsap.registerPlugin(ScrollTrigger);
+  var cards=[].slice.call(track.children),n=cards.length;
+  var A=measureHS();
+  var tlH=gsap.timeline({
+    defaults:{ease:'none'},
+    scrollTrigger:{
+      trigger:hs,start:'top top',
+      end:function(){return '+='+(innerHeight*0.58*n)},
+      pin:hs.querySelector('.hs-sticky'),pinSpacing:true,
+      scrub:0.55,invalidateOnRefresh:true,
+      onUpdate:function(self){
+        var cur=Math.min(n-1,Math.round(self.progress*(n-1)));
+        for(var i=0;i<n;i++)cards[i].classList.toggle('center',i===cur);
+      }
+    }
+  });
+  /* 分段首尾相接：段时长=锚点 p 差 → timeline progress 与锚点 p 严格同刻度 */
+  for(var si=1;si<=n;si++){
+    (function(k){
+      tlH.to(track,{x:function(){return A[k].x},duration:function(){return Math.max(.01,A[k].p-A[k-1].p)}});
+    })(si);
+  }
+  /* 巨字"项目"同程视差（0.22 倍速顺流）+ 渐显 */
+  if(giant)tlH.to(giant,{x:function(){return -A[n-1].x*0.22},opacity:1.05},0);
+  ScrollTrigger.addEventListener('refreshInit',function(){A=measureHS()});
+  if(document.fonts&&document.fonts.ready){document.fonts.ready.then(function(){ScrollTrigger.refresh()})}
+  /* 文章巨字上下视差 */
+  if(wg){
+    gsap.fromTo(wg,{y:60},{y:-60,ease:'none',
+      scrollTrigger:{trigger:wg.parentElement,start:'top bottom',end:'bottom top',scrub:true}});
+  }
+}
+/* ③ 咕嘎跨屏陪读 + 弹簧调度（scroll 同步驱动，兼容冻结渲染环境） */
+var onRail=false,armed=false;
+function railSurf(){
+  var svg=document.querySelector('header.bar .gua-rail');
+  return {path:svg.querySelector('path'),sp:100,dd:0,delay:0,svg:svg,vbW:1440,vbH:80,driftAmp:0};
+}
+setTimeout(function(){armed=true},2000);
+function onScroll(){
+  chkSpring();
+  var gua=window.__gua;   /* 动态读取：GuaPet.init 在后续 script 块执行 */
+  if(gua&&armed){
+    var below=scrollY>innerHeight*1.02;
+    if(below&&!onRail){onRail=true;gua.setSurfaces([railSurf()],0.3)}
+    else if(!below&&scrollY<innerHeight*0.92&&onRail){onRail=false;gua.setSurfaces(gua.detectClouds(),1)}
+  }
+}
+addEventListener('scroll',onScroll,{passive:true});
+if(document.fonts&&document.fonts.ready){document.fonts.ready.then(onScroll)}
+onScroll();
+})();
+</script>
 <script>
 SitePage.init();
-GuaPet.init({base:'assets/gua/',ver:'?v=15'});   /* 自动探测 .landscape 云丘为行走面 */
+window.__gua=GuaPet.init({base:'assets/gua/',ver:'?v=15'});   /* 自动探测 .landscape 云丘为行走面 */
 </script>
 </body>
 </html>
