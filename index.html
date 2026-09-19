@@ -196,18 +196,20 @@ function chkSpring(){
 var hs=document.getElementById('projects'),track=document.getElementById('hsTrack'),
     giant=document.querySelector('.hs-giant'),wg=document.querySelector('.w-giant');
 function measureHS(){
-  /* 视口绝对坐标；curX 补偿当前横移量，锚点永远基于静止布局位置——
-     offsetLeft 相对中间 wrap 会漏掉居中偏移（实测差 319px） */
+  /* 视口绝对坐标，测量统一在 x=0 位进行（gsap.set 同步写入，rect 即纯布局位置）。
+     不能用"rect - 当前x"补偿：refresh 常发生在 scrub 缓冲途中，rect 与
+     tween 时钟可能不同帧，补偿漂移会让锚点反馈式跑偏（子页返回复现）。 */
   var cards=[].slice.call(track.children);
   var cx=innerWidth/2,pad=60;
-  var curX=(window.gsap?gsap.getProperty(track,'x'):0)||0;
+  var savedX=(window.gsap?gsap.getProperty(track,'x'):0)||0;
+  if(window.gsap)gsap.set(track,{x:0});
   var anchors=[{p:0,x:0}];
   cards.forEach(function(c,i){
     var r=c.getBoundingClientRect();
-    var left=r.left-curX;
-    if(i<cards.length-1){anchors.push({p:(i+1)/cards.length,x:pad-left})}
-    else{anchors.push({p:1,x:cx-(left+r.width/2)})}
+    if(i<cards.length-1){anchors.push({p:(i+1)/cards.length,x:pad-r.left})}
+    else{anchors.push({p:1,x:cx-(r.left+r.width/2)})}
   });
+  if(window.gsap)gsap.set(track,{x:savedX});
   return anchors;
 }
 if(hs&&window.gsap&&window.ScrollTrigger&&!reduce){
