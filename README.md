@@ -16,15 +16,19 @@ assets/               共享样式 / 脚本 / 咕嘎精灵图
 
 - **云海首屏**：三层视差云丘 + 分钟级漂移 + 点击蹦星
 - **咕嘎桌宠**：零 canvas 的 DOM transform 精灵渲染，三层云丘自主漫步、
-  双击跳层、拖拽拎起；子页里栖息在导航栏上，跨页状态接力
-- **克制系滚动交互**：reveal 错峰入场、章节吸顶、数字滚动、乱码解码
+  双击跳层、拖拽拎起；滚过首屏跨屏陪读走上导航栏，子页栖息导航栏，跨页状态接力
+- **滚动叙事（GSAP）**：长文逐词弹簧（金色主题词大弹跳）、横滚项目区
+  （ScrollTrigger scrub 联动 + 原生 sticky 钉住，锚点=逐卡上台）、
+  巨型背景字错速视差；子页 reveal 错峰入场、数字滚动、乱码解码
 - **降级链实验室**：故障注入式可交互 Demo（配套文章的现场版）
 - 双主题（暮色 / 白日）、reduced-motion 降级、无 JS 亦完整可读
+
+GSAP 3.13 + ScrollTrigger 以本地 vendor 引入（`assets/js/vendor/`），不走 CDN。
 
 ## 本地预览
 
 ```bash
-python tools/gua_server.py   # http://127.0.0.1:8935（no-cache 开发服务器）
+python -m http.server 8935   # 任意静态服务器均可，http://127.0.0.1:8935
 ```
 
 ---
