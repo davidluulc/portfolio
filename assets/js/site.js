@@ -186,8 +186,12 @@ function init(){
   var btn=document.getElementById('mailBtn');
   if(btn){
     var mail=btn.getAttribute('data-mail')||btn.textContent.trim();
+    var label=btn.querySelector('b');   /* c-chip 结构：只改地址文本，图标与结构不动 */
     on(btn,'click',function(){
-      function done(){var t=btn.textContent;btn.textContent='已复制到剪贴板';later(function(){btn.textContent=t},1800)}
+      function done(){
+        if(!label){var t=btn.textContent;btn.textContent='已复制到剪贴板';later(function(){btn.textContent=t},1800);return}
+        var t2=label.textContent;label.textContent='已复制到剪贴板';later(function(){label.textContent=t2},1800);
+      }
       if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(mail).then(done,done)}
       else{var i=document.createElement('textarea');i.value=mail;i.style.position='fixed';i.style.opacity='0';
         document.body.appendChild(i);i.select();try{document.execCommand('copy')}catch(e){}i.remove();done()}

@@ -206,7 +206,9 @@ footer.foot a{color:var(--accent);text-decoration:none}
 .aboutlong b{color:var(--text);font-weight:700}
 .aboutlong b.g,.aboutlong .w.gb{color:var(--gold)}
 /* 横滚 × 卡内视差：纵向滚动驱动卡排横移 */
-.hscroll{min-height:100vh;position:relative}
+/* 274vh=100vh 视口屏 + 3 卡 x 58vh 行程（卡数变化需同步调整）；
+   钉住交给原生 sticky，ScrollTrigger 只做 scrub 联动 */
+.hscroll{height:274vh;position:relative}
 .hs-sticky{pointer-events:none;position:sticky;top:0;height:100vh;display:flex;flex-direction:column;justify-content:center;
   padding:0 0 0 max(26px,calc((100vw - 840px)/2));overflow:hidden}
 .hs-giant{pointer-events:none;position:absolute;left:26px;top:9vh;font-size:clamp(120px,17vw,230px);font-weight:900;
@@ -231,6 +233,7 @@ footer.foot a{color:var(--accent);text-decoration:none}
 .proj-h .go{font-size:13.5px;font-weight:700;color:var(--accent)}
 @media(max-width:760px){.proj-h{width:80vw}}
 /* 巨型背景字错速（文章） */
+#writing{position:relative}   /* w-giant 锚定 */
 .w-giant{position:absolute;right:-3vw;top:-46px;font-size:clamp(110px,15vw,200px);font-weight:900;
   color:color-mix(in srgb,var(--text) 9%,transparent);pointer-events:none;user-select:none;will-change:transform}
 /* 咕嘎导航栏行走面 */
