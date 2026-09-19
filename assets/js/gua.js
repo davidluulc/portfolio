@@ -51,9 +51,12 @@ function init(opts){
       return s.path?s:null;
     }).filter(Boolean);
   }
-  /* 运行时切换行走面（首页跨屏陪读用：滚出首屏换导航栏轨道，滚回换云丘） */
-  function setSurfaces(list,scaleK){
+  /* 运行时切换行走面（首页跨屏陪读用：滚出首屏换导航栏轨道，滚回换云丘）。
+     always 随面切换：sticky 轨道必须 fixed mount+视口坐标+不裁滚动循环，
+     否则咕嘎切轨后不走（walkerTick 被裁）且滚动即失联（offY 冻结在切换时刻） */
+  function setSurfaces(list,scaleK,always){
     if(scaleK)SC=scaleK;
+    if(always!=null)ALWAYS=!!always;
     surfaces=(list||[]).map(normalizeSurface);
     cornerMode=surfaces.length===0;
     mount.classList.toggle('fixed',cornerMode||ALWAYS);

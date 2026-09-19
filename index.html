@@ -253,8 +253,8 @@ function onScroll(){
   var gua=window.__gua;   /* 动态读取：GuaPet.init 在后续 script 块执行 */
   if(gua&&armed){
     var below=scrollY>innerHeight*1.02;
-    if(below&&!onRail){onRail=true;gua.setSurfaces([railSurf()],0.3)}
-    else if(!below&&scrollY<innerHeight*0.92&&onRail){onRail=false;gua.setSurfaces(gua.detectClouds(),1)}
+    if(below&&!onRail){onRail=true;gua.setSurfaces([railSurf()],0.3,true)}
+    else if(!below&&scrollY<innerHeight*0.92&&onRail){onRail=false;gua.setSurfaces(gua.detectClouds(),1,false)}
   }
 }
 addEventListener('scroll',onScroll,{passive:true});
