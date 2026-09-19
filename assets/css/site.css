@@ -108,11 +108,11 @@ body{background:linear-gradient(180deg,var(--sky-top) 0%,var(--sky-mid) 32vh,var
 header.bar{position:sticky;top:0;z-index:40;
   background:linear-gradient(to top,transparent 0,var(--nav-top) 100%);
   transition:--nav-top .95s cubic-bezier(.41,.1,.13,1)}
-header.bar[data-over="true"]{--nav-top:color-mix(in srgb,var(--bg) 72%,transparent);
-  backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+header.bar[data-over="true"]{--nav-top:color-mix(in srgb,var(--bg) 30%,transparent);
+  backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
   box-shadow:0 1px 0 var(--line);
   transition:--nav-top .35s cubic-bezier(.41,.1,.13,1)}
-.bar-in{max-width:840px;margin:0 auto;height:80px;padding:0 26px;display:flex;align-items:center;gap:22px}
+.bar-in{max-width:840px;margin:0 auto;height:58px;padding:0 26px;display:flex;align-items:center;gap:22px}
 .logo{font-weight:800;font-size:17px;color:var(--text);text-decoration:none;display:flex;align-items:center;gap:9px}
 .logo .dot{width:10px;height:10px;border-radius:50%;background:var(--accent);box-shadow:0 0 12px var(--accent)}
 nav.links{margin-left:auto;display:flex;gap:20px}
@@ -239,7 +239,7 @@ footer.foot a{color:var(--accent);text-decoration:none}
 .w-giant{position:absolute;right:-3vw;top:-46px;font-size:clamp(110px,15vw,200px);font-weight:900;
   color:color-mix(in srgb,var(--text) 9%,transparent);pointer-events:none;user-select:none;will-change:transform}
 /* 咕嘎导航栏行走面 */
-.gua-rail{position:absolute;left:0;top:24px;width:100%;height:80px;pointer-events:none;display:block}
+.gua-rail{position:absolute;left:0;top:24px;width:100%;height:58px;pointer-events:none;display:block}
 /* 联络双入口 */
 .c-links{display:flex;gap:14px;flex-wrap:wrap;margin-top:24px;justify-content:center}
 .c-chip{display:inline-flex;align-items:center;gap:10px;text-decoration:none;cursor:pointer;
