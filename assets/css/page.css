@@ -27,11 +27,13 @@ body.pg header.bar{--nav-top:var(--bg)}
 /* ---- 咕嘎行走轨道：铺满导航栏下移 24px（脚底线=导航下沿再往下探一点） ---- */
 .gua-rail{position:absolute;left:0;top:24px;width:100%;height:58px;pointer-events:none;display:block}
 
-/* ---- 章节与吸顶小节标题（磨砂：轻色调+模糊，不在天空渐变上压白带） ---- */
+/* ---- 章节与吸顶小节标题：静态完全融入渐变；吸顶后（.stuck 由 site.js 判定）
+       才显示磨砂底，保证滚过时标题可读且不压白带 ---- */
 .sec{margin-top:72px}
 .sec-head{display:flex;align-items:center;gap:12px;
   position:sticky;top:58px;z-index:5;padding:14px 0;
-  background:color-mix(in srgb,var(--bg) 38%,transparent);
+  background:transparent;transition:background .3s}
+.sec-head.stuck{background:color-mix(in srgb,var(--bg) 38%,transparent);
   backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}
 .sec-head .dash{width:26px;height:4px;border-radius:3px;background:var(--accent);flex:none}
 .sec-head h2{font-size:24px;font-weight:800;letter-spacing:.01em}

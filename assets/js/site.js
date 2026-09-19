@@ -182,6 +182,21 @@ function init(){
     },true);
   }
 
+  /* ---- 子页小节标题吸顶态（静态透明融入渐变，贴住吸顶线才显示磨砂底） ---- */
+  var heads=[].slice.call(document.querySelectorAll('.sec-head'));
+  if(heads.length){
+    var TOP=58;
+    function chkHeads(){
+      heads.forEach(function(h){
+        var r=h.getBoundingClientRect();
+        h.classList.toggle('stuck',r.top<=TOP+1&&r.bottom>TOP);
+      });
+    }
+    on(window,'scroll',chkHeads,{passive:true});
+    on(window,'resize',chkHeads,{passive:true});
+    chkHeads();
+  }
+
   /* ---- 邮件复制 ---- */
   var btn=document.getElementById('mailBtn');
   if(btn){
