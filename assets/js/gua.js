@@ -30,15 +30,7 @@ function init(opts){
   if(opts.surfaces){
     surfaces=opts.surfaces.map(normalizeSurface);
   }else{
-    var landSvg=document.querySelector('.landscape svg[viewBox]');
-    surfaces=[].map.call(document.querySelectorAll('.pv'),function(g){
-      var d=g.querySelector('.drift');
-      var s={path:g.querySelector('.cl'),sp:+g.getAttribute('data-sp')||50,
-             dd:d?(parseFloat(d.style.getPropertyValue('--dd'))||14):0,
-             delay:d?(parseFloat(getComputedStyle(d).animationDelay)||0):0,
-             svg:landSvg,vbW:1440,vbH:1000,driftAmp:26};
-      return s.path?s:null;
-    }).filter(Boolean);
+    surfaces=detectClouds();
   }
   var cornerMode=surfaces.length===0;
   if(cornerMode||ALWAYS)mount.classList.add('fixed');   /* ALWAYS=sticky 行走面，mount 用屏幕坐标 */
@@ -47,6 +39,29 @@ function init(opts){
   function normalizeSurface(s){
     return {path:s.path,sp:s.sp||50,dd:s.dd||0,delay:s.delay||0,
             svg:s.svg,vbW:s.vbW||1440,vbH:s.vbH||1000,driftAmp:s.driftAmp==null?26:s.driftAmp};
+  }
+  function detectClouds(){
+    var landSvg=document.querySelector('.landscape svg[viewBox]');
+    return [].map.call(document.querySelectorAll('.pv'),function(g){
+      var d=g.querySelector('.drift');
+      var s={path:g.querySelector('.cl'),sp:+g.getAttribute('data-sp')||50,
+             dd:d?(parseFloat(d.style.getPropertyValue('--dd'))||14):0,
+             delay:d?(parseFloat(getComputedStyle(d).animationDelay)||0):0,
+             svg:landSvg,vbW:1440,vbH:1000,driftAmp:26};
+      return s.path?s:null;
+    }).filter(Boolean);
+  }
+  /* 运行时切换行走面（首页跨屏陪读用：滚出首屏换导航栏轨道，滚回换云丘） */
+  function setSurfaces(list,scaleK){
+    if(scaleK)SC=scaleK;
+    surfaces=(list||[]).map(normalizeSurface);
+    cornerMode=surfaces.length===0;
+    mount.classList.toggle('fixed',cornerMode||ALWAYS);
+    MAP.ok=false;
+    curLayer=Math.min(curLayer,Math.max(0,surfaces.length-1));
+    if(!cornerMode){computeMap();fitBox();placeGua(performance.now())}
+    else{fitBox();placeGua(performance.now())}
+    return true;
   }
 
   /* ---- 播放器（每动作专属元素） ---- */
@@ -448,6 +463,8 @@ function init(opts){
       mount.remove();
     },
     jump:function(){startJump()},
+    setSurfaces:setSurfaces,
+    detectClouds:detectClouds,
     get layer(){return cornerMode?-1:curLayer},
     get cornerMode(){return cornerMode}
   };

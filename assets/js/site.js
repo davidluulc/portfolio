@@ -185,7 +185,7 @@ function init(){
   /* ---- 邮件复制 ---- */
   var btn=document.getElementById('mailBtn');
   if(btn){
-    var mail=btn.textContent.trim();
+    var mail=btn.getAttribute('data-mail')||btn.textContent.trim();
     on(btn,'click',function(){
       function done(){var t=btn.textContent;btn.textContent='已复制到剪贴板';later(function(){btn.textContent=t},1800)}
       if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(mail).then(done,done)}
