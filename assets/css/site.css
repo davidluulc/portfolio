@@ -108,7 +108,9 @@ body{background:linear-gradient(180deg,var(--sky-top) 0%,var(--sky-mid) 32vh,var
 header.bar{position:sticky;top:0;z-index:40;
   background:linear-gradient(to top,transparent 0,var(--nav-top) 100%);
   transition:--nav-top .95s cubic-bezier(.41,.1,.13,1)}
-header.bar[data-over="true"]{--nav-top:var(--bg);
+header.bar[data-over="true"]{--nav-top:color-mix(in srgb,var(--bg) 72%,transparent);
+  backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+  box-shadow:0 1px 0 var(--line);
   transition:--nav-top .35s cubic-bezier(.41,.1,.13,1)}
 .bar-in{max-width:840px;margin:0 auto;height:80px;padding:0 26px;display:flex;align-items:center;gap:22px}
 .logo{font-weight:800;font-size:17px;color:var(--text);text-decoration:none;display:flex;align-items:center;gap:9px}
